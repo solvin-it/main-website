@@ -120,4 +120,8 @@ textarea.field { min-height: 140px; resize: vertical; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+  .handoff-stage { opacity: 1; }
+  .handoff-icon { color: var(--success); border-color: color-mix(in srgb, var(--success) 60%, var(--line)); }
+  .handoff-track::after { transform: none; }
+  .work-token { display: none; }
 }

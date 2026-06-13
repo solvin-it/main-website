@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Check, ChevronDown } from "lucide-react";
+import { ArrowRight, Bot, Check, ChevronDown, CircleCheck, FileText, UserRound } from "lucide-react";
 import { faqs, painPoints, processSteps, services, trustPillars } from "@/lib/content";
 
 export function SectionHeading({ eyebrow, title, text }: { eyebrow: string; title: string; text?: string }) {
@@ -7,20 +7,28 @@ export function SectionHeading({ eyebrow, title, text }: { eyebrow: string; titl
 }
 
 export function WorkflowVisual() {
-  const steps = ["Manual work", "Workflow design", "AI assistance", "Human approval", "Useful output"];
+  const steps = [
+    { label: "Work input", detail: "Request received", icon: FileText },
+    { label: "AI assistant", detail: "Drafts and structures", icon: Bot },
+    { label: "Human review", detail: "Checks and decides", icon: UserRound },
+    { label: "Approved output", detail: "Ready to use", icon: CircleCheck },
+  ];
   return (
-    <div className="workflow-visual surface" aria-label="Workflow from manual work to approved output">
+    <div className="workflow-visual surface" aria-label="Work input moves to an AI assistant, then to human review, and becomes an approved output">
       <div className="visual-top"><span className="eyebrow">A practical system</span><span className="review-label">Human review built in</span></div>
-      <div className="workflow-list">
-        <span className="workflow-progress" aria-hidden="true" />
-        {steps.map((step, index) => (
-          <div className="workflow-node" style={{ "--step": index } as React.CSSProperties} key={step}>
-            <span className="workflow-marker" aria-hidden="true" />
-            <span className="workflow-number">{String(index + 1).padStart(2, "0")}</span>
-            <strong>{step}</strong>
+      <p className="sr-only">A work item is prepared by AI, checked by a person, and released only after approval.</p>
+      <div className="handoff-flow">
+        <span className="handoff-track" aria-hidden="true" />
+        <span className="work-token" aria-hidden="true"><FileText size={12} /></span>
+        {steps.map(({ label, detail, icon: Icon }, index) => (
+          <div className={`handoff-stage handoff-stage-${index}`} key={label}>
+            <span className="handoff-icon" aria-hidden="true"><Icon size={22} strokeWidth={1.8} /></span>
+            <strong>{label}</strong>
+            <small>{detail}</small>
           </div>
         ))}
       </div>
+      <div className="handoff-status" aria-hidden="true"><span /> AI prepares. A person approves.</div>
     </div>
   );
 }
