@@ -7,9 +7,7 @@
 .trust-line { display: flex; align-items: center; gap: .6rem; color: var(--muted); font-size: .88rem; margin-top: 1.5rem; }
 .trust-line::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 5px color-mix(in srgb, var(--success) 12%, transparent); }
 .workflow-visual { padding: 1.25rem; box-shadow: var(--shadow); transform: rotate(1.5deg); }
-.visual-top { display: flex; justify-content: space-between; align-items: center; padding: .5rem .35rem 1rem; border-bottom: 1px solid var(--line); }
-.review-label { display: inline-flex; align-items: center; gap: .45rem; font-size: .72rem; color: var(--success); }
-.review-label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 12%, transparent); }
+.visual-top { padding: .5rem .35rem 1rem; border-bottom: 1px solid var(--line); }
 .handoff-flow { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: .55rem; padding: 3.35rem .15rem 1.7rem; }
 .handoff-track { position: absolute; left: 11%; right: 11%; top: 1.65rem; height: 2px; background: var(--line); }
 .handoff-track::after { content: ""; display: block; width: 100%; height: 100%; transform-origin: left; background: var(--brand); animation: handoff-track 6.4s linear infinite; }
@@ -171,8 +169,6 @@
   .service-card, .service-card:nth-child(4), .service-card:nth-child(5) { grid-column: span 6; }
   .credential-list { grid-template-columns: 1fr; }
   .pain-grid { grid-template-columns: 1fr; }
-  .visual-top { align-items: flex-start; gap: .75rem; }
-  .review-label { text-align: right; }
   .handoff-flow { grid-template-columns: 1fr; gap: .55rem; padding: 1.25rem .2rem 1.25rem 1rem; }
   .handoff-stage { display: grid; grid-template-columns: 3.2rem 1fr; grid-template-rows: auto auto; text-align: left; column-gap: .85rem; align-items: center; }
   .handoff-icon { grid-row: 1 / 3; width: 3.2rem; height: 3.2rem; box-shadow: 0 0 0 5px var(--surface); }

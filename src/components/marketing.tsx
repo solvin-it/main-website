@@ -15,7 +15,7 @@ export function WorkflowVisual() {
   ];
   return (
     <div className="workflow-visual surface" aria-label="Work input moves to an AI assistant, then to human review, and becomes an approved output">
-      <div className="visual-top"><span className="eyebrow">A practical system</span><span className="review-label">Human review built in</span></div>
+      <div className="visual-top"><span className="eyebrow">A practical system</span></div>
       <p className="sr-only">A work item is prepared by AI, checked by a person, and released only after approval.</p>
       <div className="handoff-flow">
         <span className="handoff-track" aria-hidden="true" />
