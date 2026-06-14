@@ -37,7 +37,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     session.recommendation = recommendation;
   }
   const question = questions[session.stage];
-  const assistantMessage = recommendation ? `${analysis.acknowledgment} ${question.message}` : `${analysis.acknowledgment} ${question.message}`;
+  const assistantMessage = `${analysis.acknowledgment} ${question.message}`;
   await saveTurn(session, safeMessage, assistantMessage);
   return NextResponse.json({
     sessionId: id, message: assistantMessage, stage: session.stage, progress: progressFor(session.stage),

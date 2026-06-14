@@ -5,7 +5,8 @@ import { extractFallback, fallbackRecommendation } from "./assessment";
 import type { ReadinessScore } from "./types";
 
 const factsSchema = z.object({
-  acknowledgment: z.string().max(240),
+  // Trim rather than reject: a long acknowledgment must never discard valid facts.
+  acknowledgment: z.string().transform(value => value.slice(0, 240)),
   facts: z.object({
     businessType: z.string().optional(),
     teamFunction: z.string().optional(),
@@ -30,8 +31,10 @@ const recommendationSchema = z.object({
   nextAction: z.string(),
 });
 
+const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+
 function client() {
-  if (!process.env.ANTHROPIC_API_KEY || !process.env.ANTHROPIC_MODEL) return null;
+  if (!process.env.ANTHROPIC_API_KEY) return null;
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 12_000, maxRetries: 0 });
 }
 
@@ -40,17 +43,20 @@ async function callTool<T>(
   description: string,
   schema: { type: "object"; properties?: Record<string, unknown>; required?: string[]; additionalProperties?: boolean },
   prompt: string,
+  // Strict mode guarantees schema-valid tool input, but requires every object property to
+  // be listed in `required`. Only enable it for schemas that satisfy that constraint.
+  strict = false,
 ): Promise<T | null> {
   const anthropic = client();
   if (!anthropic) return null;
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const response = await anthropic.messages.create({
-        model: process.env.ANTHROPIC_MODEL!,
+        model: MODEL,
         max_tokens: 700,
         system: "You are Solvin Advisor, a calm workflow consultant. Never request sensitive records. Be concise and practical.",
         messages: [{ role: "user", content: prompt }],
-        tools: [{ name, description, input_schema: schema }],
+        tools: [{ name, description, input_schema: schema, strict }],
         tool_choice: { type: "tool", name },
       });
       const block = response.content.find(item => item.type === "tool_use");
@@ -90,7 +96,7 @@ export async function createRecommendation(facts: AssessmentFacts, score: Readin
     type: "object", additionalProperties: false,
     required: ["workflowSummary", "opportunity", "blocker", "firstProject", "recommendedService", "nextAction"],
     properties: Object.fromEntries(["workflowSummary", "opportunity", "blocker", "firstProject", "recommendedService", "nextAction"].map(key => [key, { type: "string" }])),
-  }, `Facts: ${JSON.stringify(facts)}\nScore: ${JSON.stringify(score)}\nRecommend the smallest useful next step. Do not overpromise.`);
+  }, `Facts: ${JSON.stringify(facts)}\nScore: ${JSON.stringify(score)}\nRecommend the smallest useful next step. Do not overpromise.`, true);
   const parsed = recommendationSchema.safeParse(result);
   return parsed.success ? parsed.data : fallbackRecommendation(facts, score);
 }
