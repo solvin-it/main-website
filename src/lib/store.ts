@@ -62,7 +62,9 @@ interface SessionRow {
 function supabase() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  return url && key ? createClient(url, key, { auth: { persistSession: false } }) : null;
+  // Tables live in the dedicated `solvin` schema (this Supabase project also hosts
+  // another app under `public`). The schema must be in the project's exposed schemas.
+  return url && key ? createClient(url, key, { auth: { persistSession: false }, db: { schema: "solvin" } }) : null;
 }
 
 function firstRelated<T>(value: T | T[] | null | undefined): T | undefined {
