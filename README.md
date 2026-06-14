@@ -48,8 +48,8 @@ External credentials are optional for local UI development. Without Supabase, se
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL |
 | `NEXT_PUBLIC_CALCOM_URL` | Discovery-call booking page |
-| `ANTHROPIC_API_KEY` | Server-only Claude credential |
-| `ANTHROPIC_MODEL` | Configurable Claude model |
+| `ANTHROPIC_API_KEY` | Server-only Claude credential. Claude runs whenever this is set. |
+| `ANTHROPIC_MODEL` | Configurable Claude model (defaults to `claude-sonnet-4-6` when unset) |
 | `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only database access |
 | `RESEND_API_KEY` | Contact notification delivery |

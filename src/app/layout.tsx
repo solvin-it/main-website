@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://solvin.solutions";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://solvin.co";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

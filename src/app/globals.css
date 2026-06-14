@@ -124,4 +124,7 @@ textarea.field { min-height: 140px; resize: vertical; }
   .handoff-icon { color: var(--success); border-color: color-mix(in srgb, var(--success) 60%, var(--line)); }
   .handoff-track::after { transform: none; }
   .work-token { display: none; }
+  .handoff-status-dot { background: var(--success); }
+  .handoff-status-agent, .handoff-status-human, .handoff-status-finalizing { display: none; }
+  .handoff-status-complete { opacity: 1; }
 }

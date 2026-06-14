@@ -26,15 +26,22 @@
 .handoff-stage strong { margin-top: 1rem; font-family: var(--font-sora); font-size: .78rem; letter-spacing: -.02em; }
 .handoff-stage small { color: var(--muted); font-size: .63rem; line-height: 1.35; margin-top: .2rem; }
 .work-token { position: absolute; z-index: 4; top: 1rem; left: calc(11% - .65rem); width: 1.3rem; height: 1.3rem; display: grid; place-items: center; border-radius: .4rem; color: white; background: var(--brand); box-shadow: 0 4px 14px color-mix(in srgb, var(--brand) 35%, transparent); animation: work-handoff 6.4s linear infinite; }
-.handoff-status { display: flex; align-items: center; justify-content: center; gap: .45rem; border-top: 1px solid var(--line); padding: .9rem .25rem .15rem; color: var(--muted); font-size: .7rem; }
-.handoff-status span { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); animation: status-pulse 6.4s linear infinite; }
+.handoff-status { display: grid; grid-template-columns: 1rem 9.5rem; align-items: center; justify-content: start; gap: .25rem; border-top: 1px solid var(--line); padding: .9rem .35rem .15rem; color: var(--muted); font-size: .7rem; }
+.handoff-status-dot { justify-self: center; width: 6px; height: 6px; border-radius: 50%; background: var(--brand); animation: status-pulse 6.4s linear infinite; }
+.handoff-status-copy { display: grid; text-align: left; }
+.handoff-status-copy > span { grid-area: 1 / 1; opacity: 0; }
+.handoff-status-agent { animation: status-copy-agent 6.4s linear infinite; }
+.handoff-status-human { animation: status-copy-human 6.4s linear infinite; }
+.handoff-status-finalizing { animation: status-copy-finalizing 6.4s linear infinite; }
+.handoff-status-complete { animation: status-copy-complete 6.4s linear infinite; }
 .pain-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .readiness-timing { margin-top: 1.25rem; display: block; }
 @keyframes handoff-track {
   0%, 10% { transform: scaleX(0); opacity: .3; }
   18%, 32% { transform: scaleX(.333); opacity: 1; }
   40%, 58% { transform: scaleX(.667); opacity: 1; }
-  68%, 88% { transform: scaleX(1); opacity: 1; background: var(--success); }
+  68%, 76% { transform: scaleX(1); opacity: 1; background: var(--brand); }
+  78%, 88% { transform: scaleX(1); opacity: 1; background: var(--success); }
   96%, 100% { transform: scaleX(1); opacity: 0; background: var(--success); }
 }
 @keyframes work-handoff {
@@ -42,7 +49,8 @@
   18%, 32% { left: calc(37% - .65rem); background: var(--brand); transform: scale(1); animation-timing-function: ease-in-out; }
   40% { left: calc(63% - .65rem); background: var(--brand); transform: scale(1.12); }
   58% { left: calc(63% - .65rem); background: var(--brand); transform: scale(1.12); animation-timing-function: ease-in-out; }
-  68%, 88% { left: calc(89% - .65rem); background: var(--success); opacity: 1; transform: scale(1); }
+  68%, 76% { left: calc(89% - .65rem); background: var(--brand); opacity: 1; transform: scale(1.08); }
+  78%, 88% { left: calc(89% - .65rem); background: var(--success); opacity: 1; transform: scale(1); }
   96%, 100% { left: calc(89% - .65rem); background: var(--success); opacity: 0; transform: scale(1); }
 }
 @keyframes handoff-icon-input {
@@ -64,7 +72,8 @@
 }
 @keyframes handoff-icon-output {
   0%, 67.9% { color: var(--muted); border-color: var(--line); background: var(--surface); transform: translateY(0); box-shadow: 0 0 0 7px var(--surface); }
-  68%, 88% { color: var(--success); border-color: color-mix(in srgb, var(--success) 60%, var(--line)); background: color-mix(in srgb, var(--success) 8%, var(--surface)); transform: translateY(-3px); box-shadow: 0 0 0 7px var(--surface), 0 10px 28px color-mix(in srgb, var(--success) 15%, transparent); }
+  68%, 76% { color: var(--brand); border-color: var(--brand); background: color-mix(in srgb, var(--brand) 8%, var(--surface)); transform: translateY(-3px); box-shadow: 0 0 0 7px var(--surface), 0 10px 28px color-mix(in srgb, var(--brand) 15%, transparent); }
+  78%, 88% { color: var(--success); border-color: color-mix(in srgb, var(--success) 60%, var(--line)); background: color-mix(in srgb, var(--success) 8%, var(--surface)); transform: translateY(0); box-shadow: 0 0 0 7px var(--surface), 0 10px 28px color-mix(in srgb, var(--success) 15%, transparent); }
   96%, 100% { color: var(--muted); border-color: var(--line); background: var(--surface); transform: translateY(0); box-shadow: 0 0 0 7px var(--surface); }
 }
 @keyframes handoff-stage-input {
@@ -89,8 +98,28 @@
 @keyframes status-pulse {
   0%, 39.9% { background: var(--brand); box-shadow: 0 0 0 0 transparent; }
   40%, 58% { background: var(--brand); box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand) 10%, transparent); }
-  68%, 88% { background: var(--success); box-shadow: 0 0 0 0 transparent; }
+  68%, 76% { background: var(--brand); box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand) 10%, transparent); }
+  78%, 88% { background: var(--success); box-shadow: 0 0 0 0 transparent; }
   96%, 100% { background: var(--muted); box-shadow: 0 0 0 0 transparent; }
+}
+@keyframes status-copy-agent {
+  0%, 38% { opacity: 1; }
+  40%, 100% { opacity: 0; }
+}
+@keyframes status-copy-human {
+  0%, 39.9% { opacity: 0; }
+  40%, 66% { opacity: 1; }
+  68%, 100% { opacity: 0; }
+}
+@keyframes status-copy-finalizing {
+  0%, 67.9% { opacity: 0; }
+  68%, 76% { opacity: 1; }
+  78%, 100% { opacity: 0; }
+}
+@keyframes status-copy-complete {
+  0%, 77.9% { opacity: 0; }
+  78%, 94% { opacity: 1; }
+  96%, 100% { opacity: 0; }
 }
 .card h3, .service-card h3 { font-family: var(--font-sora); letter-spacing: -.025em; font-size: 1.15rem; margin: 1rem 0 .5rem; }
 .card p { color: var(--muted); margin: 0; }
@@ -157,7 +186,8 @@
   0%, 10% { transform: scaleY(0); opacity: .3; }
   18%, 32% { transform: scaleY(.333); opacity: 1; }
   40%, 58% { transform: scaleY(.667); opacity: 1; }
-  68%, 88% { transform: scaleY(1); opacity: 1; background: var(--success); }
+  68%, 76% { transform: scaleY(1); opacity: 1; background: var(--brand); }
+  78%, 88% { transform: scaleY(1); opacity: 1; background: var(--success); }
   96%, 100% { transform: scaleY(1); opacity: 0; background: var(--success); }
 }
 @keyframes work-handoff-mobile {
@@ -165,6 +195,7 @@
   18%, 32% { top: calc(37.5% - .65rem); background: var(--brand); transform: scale(1); animation-timing-function: ease-in-out; }
   40% { top: calc(62.5% - .65rem); background: var(--brand); transform: scale(1.12); }
   58% { top: calc(62.5% - .65rem); background: var(--brand); transform: scale(1.12); animation-timing-function: ease-in-out; }
-  68%, 88% { top: calc(87.5% - .65rem); background: var(--success); opacity: 1; transform: scale(1); }
+  68%, 76% { top: calc(87.5% - .65rem); background: var(--brand); opacity: 1; transform: scale(1.08); }
+  78%, 88% { top: calc(87.5% - .65rem); background: var(--success); opacity: 1; transform: scale(1); }
   96%, 100% { top: calc(87.5% - .65rem); background: var(--success); opacity: 0; transform: scale(1); }
 }

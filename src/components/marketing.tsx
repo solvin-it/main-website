@@ -28,7 +28,15 @@ export function WorkflowVisual() {
           </div>
         ))}
       </div>
-      <div className="handoff-status" aria-hidden="true"><span /> AI prepares. A person approves.</div>
+      <div className="handoff-status" aria-hidden="true">
+        <span className="handoff-status-dot" />
+        <span className="handoff-status-copy">
+          <span className="handoff-status-agent">Agent prepares the work</span>
+          <span className="handoff-status-human">Human approves</span>
+          <span className="handoff-status-finalizing">Finalizing output</span>
+          <span className="handoff-status-complete">Approved and ready</span>
+        </span>
+      </div>
     </div>
   );
 }
