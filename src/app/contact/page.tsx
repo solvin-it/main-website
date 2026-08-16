@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { CalendarDays, Mail, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 
-export const metadata: Metadata = { title: "Contact", description: "Discuss a practical AI automation workflow with Solvin Solutions." };
+export const metadata: Metadata = { title: "Start a Project", description: "Discuss an AI-native product, internal tool, agent, or intelligent workflow system with Solvin." };
 
 export default function ContactPage() {
-  const booking = process.env.NEXT_PUBLIC_CALCOM_URL ?? "#contact-form";
-  return <><section className="page-hero"><div className="container"><p className="eyebrow">Contact</p><h1 className="display">Bring one workflow. We will start there.</h1><p className="subtitle">Share the recurring work, bottleneck, or automation idea you want to examine. A high-level description is enough.</p></div></section><section className="section"><div className="container split"><div><p className="eyebrow">Choose a path</p><h2 className="title">Start a practical conversation.</h2><div className="contact-options"><a className="card" href={booking} target={booking.startsWith("http") ? "_blank" : undefined} rel="noreferrer"><CalendarDays className="card-icon" /><h3>Book a discovery call</h3><p>Reserve 30 minutes to discuss the workflow and determine a useful next step.</p></a><div className="card"><Mail className="card-icon" /><h3>Send an inquiry</h3><p>Describe the process and where the friction appears. No confidential records are needed.</p></div><div className="privacy-note"><ShieldCheck size={18} /><span>Please do not include passwords, customer records, private documents, or regulated personal data.</span></div></div></div><div id="contact-form"><ContactForm /></div></div></section></>;
+  const booking = process.env.NEXT_PUBLIC_CALCOM_URL ?? "#project-form";
+  return <>
+    <section className="page-hero"><div className="container page-hero-grid"><div><p className="eyebrow">Start a project</p><h1 className="display">Bring the problem. We’ll shape what is worth building.</h1></div><div className="page-hero-aside"><p className="subtitle">Share a product idea, recurring operational problem, or existing system that needs to work better. A high-level description is enough.</p></div></div></section>
+    <section className="section"><div className="container contact-layout"><div className="contact-intro"><p className="eyebrow">Choose a path</p><h2 className="title">Begin with context.</h2><p className="subtitle">Use the form for a considered reply, or schedule a 30-minute discovery conversation directly.</p><a className="booking-link" href={booking} target={booking.startsWith("http") ? "_blank" : undefined} rel="noreferrer"><span>Book a discovery call</span><ArrowUpRight size={20} /></a><div className="privacy-note"><ShieldCheck size={18} /><span>Do not include passwords, customer records, private documents, or regulated personal data.</span></div></div><div id="project-form"><ContactForm /></div></div></section>
+  </>;
 }

@@ -87,7 +87,7 @@ export function ReadinessChat() {
 
   return <div className="assessment-shell">
     <div className="assessment-header">
-      <div><p className="eyebrow">Solvin Advisor</p><h2>AI Workflow Readiness Check</h2></div>
+      <div><p className="eyebrow">Internal product</p><h2>Solvin Readiness Advisor</h2></div>
       <button className="icon-button" onClick={() => start(true)} aria-label="Restart assessment"><RotateCcw size={17} /></button>
     </div>
     <div className="progress-track" aria-label={`${turn.progress ?? 0}% complete`}><span style={{ width: `${turn.progress ?? 0}%` }} /></div>
@@ -112,7 +112,7 @@ function ResultPanel({ result, contactSaved, busy, onSubmit }: { result: { score
     <div className="score-ring"><strong>{result.score.total}</strong><span>/ 100</span></div>
     <div><p className="eyebrow">Initial recommendation</p><h3>{result.score.category}</h3></div>
     <div className="result-grid"><div><span>Workflow</span><p>{result.recommendation.workflowSummary}</p></div><div><span>Opportunity</span><p>{result.recommendation.opportunity}</p></div><div><span>Main consideration</span><p>{result.recommendation.blocker}</p></div><div><span>Suggested first project</span><p>{result.recommendation.firstProject}</p></div></div>
-    <div className="recommended-service"><Check size={18} /><span>Recommended service: <strong>{result.recommendation.recommendedService}</strong></span></div>
+    <div className="recommended-service"><Check size={18} /><span>Recommended next step: <strong>{result.recommendation.recommendedService}</strong></span></div>
     {!contactSaved ? <form className="result-contact" onSubmit={onSubmit}><h3>Receive a follow-up on this recommendation</h3><div className="form-grid"><label><span className="label">Name *</span><input className="field" name="fullName" required /></label><label><span className="label">Email *</span><input className="field" name="email" type="email" required /></label><label><span className="label">Company</span><input className="field" name="companyName" /></label><label><span className="label">Role</span><input className="field" name="roleTitle" /></label></div><label className="consent"><input type="checkbox" required /> I agree that Solvin Solutions may contact me about this assessment.</label><button className="btn btn-primary" disabled={busy}>{busy ? <LoaderCircle className="spin" size={17} /> : <>Save recommendation <ArrowRight size={17} /></>}</button></form> : <div className="completion"><Check size={20} /><div><strong>Your recommendation is saved.</strong><p>A follow-up can now be sent using the email provided.</p></div><a className="btn btn-blue" href={booking} target={booking.startsWith("http") ? "_blank" : undefined} rel="noreferrer">Book a discovery call</a></div>}
   </div>;
 }

@@ -12,27 +12,28 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://solvin.co";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Solvin Solutions | Practical AI Workflow Automation",
-    template: "%s | Solvin Solutions",
+    default: "Solvin | AI Product & Systems Studio",
+    template: "%s | Solvin",
   },
   description:
-    "Practical AI automation, workflow consulting, and knowledge systems designed around how your business actually works.",
+    "Solvin designs and builds AI-native web and mobile products, internal tools, agents, and workflow systems.",
   keywords: [
-    "AI automation consultant",
-    "AI workflow automation",
-    "AI readiness assessment",
-    "AI agent development",
-    "n8n automation consultant",
+    "AI product studio",
+    "AI-native application development",
+    "AI web application development",
+    "AI mobile application development",
+    "AI agent and workflow systems",
   ],
+  icons: { icon: "/solvin-mark.svg", shortcut: "/solvin-mark.svg", apple: "/solvin-mark.svg" },
   openGraph: {
     title: "Solvin Solutions",
-    description: "Build AI workflows that make your business easier to run.",
+    description: "Intelligent software, shaped around real work.",
     type: "website",
     url: siteUrl,
     siteName: "Solvin Solutions",
-    images: [{ url: "/solvin-logo.png", width: 1024, height: 1024 }],
+    images: [{ url: "/solvin-social.svg", width: 1200, height: 630, alt: "Solvin — Intelligent software, shaped around real work." }],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary_large_image", title: "Solvin | AI Product & Systems Studio", description: "Intelligent software, shaped around real work.", images: ["/solvin-social.svg"] },
 };
 
 const themeScript = `
@@ -60,8 +61,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             "@type": "ProfessionalService",
             name: "Solvin Solutions",
             url: siteUrl,
-            description: "Practical AI workflow automation and consulting.",
-            serviceType: ["AI workflow automation", "AI readiness assessment", "AI agent development"],
+            description: "AI-native product development and intelligent systems for operators and founders.",
+            serviceType: ["AI product development", "Web application development", "Mobile application development", "AI agents", "Workflow systems"],
           }) }}
         />
         <a className="skip-link" href="#main">Skip to content</a>

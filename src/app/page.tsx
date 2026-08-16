@@ -1,33 +1,30 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Bot, CheckCircle2 } from "lucide-react";
-import { Faqs, FinalCta, PainGrid, Process, SectionHeading, ServiceGrid, TrustGrid, WorkflowVisual } from "@/components/marketing";
+import { ArrowRight } from "lucide-react";
+import { Approach, CapabilityStrip, FeaturedWork, FinalCta, PracticeGrid, SectionHeading } from "@/components/marketing";
 
 export default function Home() {
   return <>
     <section className="hero">
       <div className="container hero-grid">
-        <div className="hero-copy">
-          <p className="eyebrow">AI workflow consulting & implementation</p>
-          <h1 className="display">Build AI workflows that make your business easier to run.</h1>
-          <p className="subtitle">Solvin Solutions helps businesses identify, design, and implement practical AI automation, from internal assistants and knowledge systems to reporting and operational support.</p>
-          <div className="button-row"><Link className="btn btn-primary" href="/readiness">Start the readiness check <ArrowRight size={17} /></Link><Link className="btn btn-secondary" href="/services">View services</Link></div>
-          <p className="trust-line">Practical automation. Clear workflows. Responsible implementation.</p>
+        <div><p className="eyebrow">AI product &amp; systems studio · Manila / Global</p><h1 className="display">Intelligent software, shaped around real work.</h1></div>
+        <div className="hero-aside">
+          <p className="subtitle">Solvin designs and builds AI-native web and mobile products, internal tools, agents, and workflow systems—from first idea to production.</p>
+          <div className="button-row"><Link className="btn btn-blue" href="/contact">Start a project <ArrowRight size={17} /></Link><Link className="text-link" href="/capabilities">See how we build</Link></div>
+          <p className="hero-note">For operators and founders turning complex work into useful software.</p>
         </div>
-        <WorkflowVisual />
       </div>
+      <CapabilityStrip />
     </section>
 
-    <section className="section"><div className="container"><SectionHeading eyebrow="The real problem" title="AI is useful only when the workflow is clear." text="Many businesses do not have an AI problem. They have work scattered across email, spreadsheets, chat, documents, and disconnected tools." /><PainGrid /></div></section>
+    <section className="section"><div className="container"><SectionHeading eyebrow="Selected systems / 01" title="Show the software, not the AI aesthetic." text="Real interfaces and implementation details make the work easier to evaluate than abstract promises." /><FeaturedWork /></div></section>
 
-    <section className="section" style={{ background: "var(--surface-2)" }}><div className="container"><SectionHeading eyebrow="Services" title="Automation built around practical business workflows." text="Start with clarity, validate the opportunity, then implement the smallest system that creates useful operational value." /><ServiceGrid /></div></section>
+    <section className="section section-tone"><div className="container"><SectionHeading eyebrow="Two connected practices" title="Build the product. Improve the system around it." text="Solvin works across customer experiences and internal operations because useful AI products rarely stop at the interface." /><PracticeGrid /></div></section>
 
-    <section className="section"><div className="container readiness-preview"><div><p className="eyebrow">AI Workflow Readiness Check</p><h2 className="title">Not sure where AI fits? Start with a guided conversation.</h2><p className="subtitle">A short consultative assessment of your workflow, tools, data, and approval needs. It produces a practical recommendation, not a generic score.</p><div className="button-row"><Link className="btn btn-primary" href="/readiness">Start the check <ArrowRight size={17} /></Link></div><p className="muted readiness-timing">Usually takes 5–8 minutes.</p></div><div className="chat-preview surface"><div className="chat-preview-header"><span className="avatar"><Bot size={18} /></span>Solvin Advisor</div><div className="bubble">What is one recurring task that takes more time than it should?</div><div className="bubble user">Our team compiles a weekly report from spreadsheets and email updates.</div><div className="bubble"><CheckCircle2 size={16} /> That sounds recurring and structured enough to explore. Does someone review the report before it is shared?</div></div></div></section>
+    <section className="section" id="approach"><div className="container"><SectionHeading eyebrow="Approach" title="A disciplined path from ambiguity to working software." text="Product judgment, system design, and implementation stay connected from the first conversation through launch." /><Approach /></div></section>
 
-    <section className="section" style={{ background: "var(--surface)" }}><div className="container"><SectionHeading eyebrow="Our process" title="A clear path from idea to working automation." /><Process /></div></section>
-    <section className="section"><div className="container"><SectionHeading eyebrow="Built with context" title="Responsible systems, not AI hype." text="Useful automation should fit the business, keep people in control, and remain understandable after handover." /><TrustGrid /></div></section>
+    <section className="section section-tone"><div className="container studio-preview"><div className="studio-monogram"><Image src="/solvin-mark.svg" alt="" width={240} height={240} /></div><div className="studio-copy"><p className="eyebrow">The studio</p><h2 className="title">Business context and technical execution belong together.</h2><p className="subtitle">Solvin combines business analysis, product thinking, API and cloud systems, process improvement, and applied AI. The result is software designed around the work it must support.</p><Link className="text-link" href="/about">Meet the studio <ArrowRight size={16} /></Link></div></div></section>
 
-    <section className="section" style={{ background: "var(--surface-2)" }}><div className="container split"><div><p className="eyebrow">About Solvin</p><h2 className="title">Led by a systems-minded AI automation consultant.</h2></div><div><p className="subtitle">Solvin Solutions combines business analysis, technical solutioning, API integration, cloud systems, process improvement, and applied AI. The approach is simple: understand the work, design the system, build carefully, and improve from real use.</p><Link className="btn btn-secondary" href="/about">Read about the founder <ArrowRight size={17} /></Link></div></div></section>
-    <section className="section"><div className="container split"><SectionHeading eyebrow="Common questions" title="A practical approach starts with clear answers." /><Faqs /></div></section>
     <FinalCta />
   </>;
 }

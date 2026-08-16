@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none">
+  <title>Solvin</title>
+  <path d="M25 48a20 20 0 1 1 12-3.96" stroke="#0B0B0C" stroke-width="7" stroke-linecap="square"/>
+  <path d="M59 44.04A20 20 0 1 1 71 48" stroke="#0B0B0C" stroke-width="7" stroke-linecap="square"/>
+  <path d="M41 28h14" stroke="#0B0B0C" stroke-width="7"/>
+  <path d="m29 58 14 9v12l-14 9V58ZM67 58l-14 9v12l14 9V58Z" fill="#0B0B0C"/>
+  <rect x="44" y="67" width="8" height="12" rx="2" fill="#0B0B0C"/>
+</svg>

@@ -1,6 +1,6 @@
-# Solvin Solutions
+# Solvin
 
-Five-page MVP for Solvin Solutions, an AI workflow consulting and implementation business. The site includes an AI readiness assessment, lead capture, responsive light/dark themes, and production-oriented integrations.
+Website and internal product platform for Solvin, an AI product and systems studio. The public site presents AI-native web and mobile development, agents, internal tools, and workflow systems. It also includes the Readiness Advisor, lead capture, responsive light/dark themes, and production-oriented integrations.
 
 ## Technology
 
@@ -18,8 +18,11 @@ src/components/      Shared UI and marketing components
 src/lib/             Assessment, Claude, persistence, and server utilities
 public/              Brand and social assets
 supabase/migrations/ Database schema
-specifications/      Product and brand source material
+brand/               Brand guide and source assets
+website-specification.md  Original MVP specification
 ```
+
+Public routes include `/work`, `/capabilities`, `/about`, `/contact`, `/readiness`, and `/privacy`. The legacy `/services` route permanently redirects to `/capabilities`.
 
 The readiness flow is application-controlled:
 

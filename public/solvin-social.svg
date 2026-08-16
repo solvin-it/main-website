@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#F8F7F3"/>
+  <path d="M128 169a52 52 0 1 1 31-10.3M217 158.7A52 52 0 1 1 248 169M170 117h36" stroke="#0B0B0C" stroke-width="18" stroke-linecap="square"/>
+  <path d="m138 195 36 23v31l-36 23v-77ZM238 195l-36 23v31l36 23v-77Z" fill="#0B0B0C"/>
+  <rect x="177" y="218" width="22" height="31" rx="5" fill="#0B0B0C"/>
+  <text x="330" y="206" fill="#0B0B0C" font-family="Arial, Helvetica, sans-serif" font-size="70" font-weight="600" letter-spacing="18">SOLVIN</text>
+  <path d="M88 335h1024" stroke="#CBC7BD"/>
+  <text x="88" y="430" fill="#0B0B0C" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="600">Intelligent software,</text>
+  <text x="88" y="500" fill="#0B0B0C" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="600">shaped around real work.</text>
+  <text x="88" y="575" fill="#2563EB" font-family="monospace" font-size="20" letter-spacing="3">AI PRODUCT &amp; SYSTEMS STUDIO</text>
+</svg>
