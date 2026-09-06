@@ -5,15 +5,15 @@ export const stageOrder: AssessmentStage[] = [
 ];
 
 export const questions: Record<AssessmentStage, { message: string; quickReplies?: string[] }> = {
-  opening: { message: "What kind of business or team are you looking to improve?" },
-  context: { message: "What kind of work does that team handle most often?", quickReplies: ["Operations", "Sales", "Admin", "Customer support", "Reporting", "Content"] },
-  pain_point: { message: "What is one recurring task that takes more time than it should?" },
-  workflow_clarity: { message: "Is that process mostly the same each time, or does it change depending on the situation?", quickReplies: ["Mostly the same", "Changes sometimes", "Changes a lot", "Not sure"] },
-  tools_data: { message: "Where does this work happen now, and are the inputs structured like spreadsheet rows or unstructured like emails and documents?" },
-  risk: { message: "Would the output need human review before anything is sent, approved, posted, or recorded?", quickReplies: ["Yes, always", "Sometimes", "Not necessary", "Not sure"] },
-  summary: { message: "I have enough context to prepare your initial recommendation." },
-  contact: { message: "Your recommendation is ready. Add your contact details if you would like Solvin Solutions to follow up." },
-  completed: { message: "Your readiness check is complete." },
+  opening: { message: "What are you hoping to create or improve?", quickReplies: ["A website", "A web application", "A mobile or desktop app", "An AI assistant", "An internal business system", "I am not sure yet"] },
+  context: { message: "Tell me briefly about the business and who should use what we build." },
+  pain_point: { message: "What should this make easier, faster, or possible for those people?" },
+  workflow_clarity: { message: "How do they handle this today—or, for a new idea, what should the ideal experience look like?" },
+  tools_data: { message: "What already exists that we should work with: a current website, brand materials, software, content, data, or other tools?" },
+  risk: { message: "Are there any timing, approval, privacy, budget, or technical constraints we should account for?", quickReplies: ["There is a target date", "Human approval is important", "Sensitive data is involved", "Budget is still open", "No known constraints", "Not sure yet"] },
+  summary: { message: "I have enough context to prepare a starting project brief." },
+  contact: { message: "Your project brief is ready." },
+  completed: { message: "Your project brief has been sent." },
 };
 
 export function nextStage(stage: AssessmentStage): AssessmentStage {
@@ -32,21 +32,24 @@ export function containsSensitiveData(value: string) {
 
 export function extractFallback(stage: AssessmentStage, answer: string): Partial<AssessmentFacts> {
   const normalized = answer.toLowerCase();
-  if (stage === "opening") return { businessType: answer.slice(0, 200) };
-  if (stage === "context") return { teamFunction: answer.slice(0, 200) };
-  if (stage === "pain_point") return { painPoint: answer.slice(0, 500), workflowName: answer.slice(0, 180), frequency: /\b(daily|every day)\b/.test(normalized) ? "daily" : /\b(weekly|every week)\b/.test(normalized) ? "weekly" : "recurring" };
+  if (stage === "opening") {
+    const projectType = /\bwebsite\b/.test(normalized) ? "website" : /\bweb app|web application|portal|platform\b/.test(normalized) ? "web_application" : /\bmobile|ios|android\b/.test(normalized) ? "mobile_application" : /\bdesktop\b/.test(normalized) ? "desktop_application" : /\bai|assistant|agent|chatbot\b/.test(normalized) ? "ai_system" : /\binternal|operation|workflow|business system\b/.test(normalized) ? "operational_system" : "unsure";
+    return { projectType, projectGoal: answer.slice(0, 500) };
+  }
+  if (stage === "context") return { businessType: answer.slice(0, 240), targetUsers: answer.slice(0, 300), teamFunction: answer.slice(0, 200) };
+  if (stage === "pain_point") return { painPoint: answer.slice(0, 500), desiredOutcome: answer.slice(0, 500), workflowName: answer.slice(0, 180), frequency: /\b(daily|every day)\b/.test(normalized) ? "daily" : /\b(weekly|every week)\b/.test(normalized) ? "weekly" : undefined };
   if (stage === "workflow_clarity") {
     const processConsistency = normalized.includes("mostly") ? "mostly_same" : normalized.includes("sometimes") ? "sometimes_changes" : normalized.includes("lot") || normalized.includes("often") ? "changes_often" : "unknown";
-    return { processConsistency };
+    return { processConsistency, currentSituation: answer.slice(0, 600) };
   }
   if (stage === "tools_data") {
     const tools = ["email", "spreadsheet", "google drive", "notion", "crm", "slack", "teams"].filter(tool => normalized.includes(tool));
     const dataShape = normalized.includes("unstructured") || /\b(email|pdf|document|message)\b/.test(normalized) ? (/\b(row|spreadsheet|structured)\b/.test(normalized) ? "mixed" : "unstructured") : /\b(row|spreadsheet|structured)\b/.test(normalized) ? "structured" : "unknown";
-    return { tools, dataShape };
+    return { tools, existingAssets: answer.split(",").map(item => item.trim()).filter(Boolean).slice(0, 8), dataShape };
   }
   if (stage === "risk") {
     const humanApproval = normalized.includes("always") || normalized.startsWith("yes") ? "always" : normalized.includes("sometimes") ? "sometimes" : normalized.includes("not necessary") ? "not_needed" : "unknown";
-    return { humanApproval };
+    return { humanApproval, sensitiveData: normalized.includes("sensitive"), constraints: answer.slice(0, 500) };
   }
   return {};
 }
@@ -63,13 +66,18 @@ export function scoreAssessment(facts: AssessmentFacts): ReadinessScore {
 }
 
 export function fallbackRecommendation(facts: AssessmentFacts, score: ReadinessScore): Recommendation {
-  const service = score.total < 40 ? "Workflow Automation Audit" : score.total < 60 ? "Workflow Automation Audit" : score.total < 80 ? "AI Workflow Prototype" : "AI Agent and Knowledge System";
+  const serviceByType = {
+    website: "Website strategy and build", web_application: "Web application design and development", mobile_application: "Mobile application design and development", desktop_application: "Cross-platform application development", ai_system: "AI assistant or intelligent system", operational_system: "Business software design and development", unsure: "Product discovery and solution design",
+  } as const;
+  const service = serviceByType[facts.projectType ?? "unsure"];
+  const audience = facts.targetUsers ?? facts.teamFunction ?? "the people who will use it";
+  const goal = facts.desiredOutcome ?? facts.painPoint ?? facts.projectGoal ?? "the outcome you described";
   return {
-    workflowSummary: facts.painPoint ?? facts.workflowName ?? "The recurring workflow you described",
-    opportunity: score.total >= 60 ? "Use AI to prepare, classify, summarize, or route the work while retaining review." : "Clarify and automate the repeatable steps before adding more advanced AI.",
-    blocker: facts.processConsistency === "changes_often" ? "The process changes often and should be mapped before implementation." : facts.dataShape === "unknown" ? "The source data and integration path need clarification." : "Approval rules and exception handling should be confirmed.",
-    firstProject: score.total >= 80 ? "A focused knowledge assistant or tool-using workflow with human oversight." : score.total >= 60 ? "A prototype that prepares the output and routes it for review." : "A workflow map and lightweight automation of the most repeatable steps.",
+    workflowSummary: `${service} for ${audience}`,
+    opportunity: `Create a focused first release that helps ${audience} achieve ${goal}.`,
+    blocker: facts.constraints ?? "Scope, priority features, and the definition of a successful first release still need confirmation.",
+    firstProject: facts.currentSituation ? `Design the core experience around the current situation described: ${facts.currentSituation}` : `Map the core user journey and build the smallest version that proves ${goal}.`,
     recommendedService: service,
-    nextAction: "Book a 30-minute discovery call to map the workflow and validate the implementation approach.",
+    nextAction: "Review this brief together, correct any assumptions, and agree on the smallest valuable first release.",
   };
 }

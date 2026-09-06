@@ -15,8 +15,8 @@ describe("assessment flow", () => {
   });
 
   it("extracts deterministic fallback values", () => {
-    expect(extractFallback("workflow_clarity", "Mostly the same")).toEqual({ processConsistency: "mostly_same" });
-    expect(extractFallback("risk", "Sometimes")).toEqual({ humanApproval: "sometimes" });
+    expect(extractFallback("workflow_clarity", "Mostly the same")).toMatchObject({ processConsistency: "mostly_same", currentSituation: "Mostly the same" });
+    expect(extractFallback("risk", "Sometimes")).toMatchObject({ humanApproval: "sometimes", constraints: "Sometimes" });
   });
 });
 

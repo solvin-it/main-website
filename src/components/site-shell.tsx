@@ -6,10 +6,9 @@ import { Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const links = [
-  ["Work", "/work"],
-  ["Capabilities", "/capabilities"],
-  ["Approach", "/#approach"],
-  ["Studio", "/about"],
+  ["What we build", "/capabilities"],
+  ["How we work", "/#method"],
+  ["About Jose", "/about"],
 ] as const;
 
 export function ThemeToggle() {
@@ -62,7 +61,7 @@ export function Header() {
         <Logo />
         <nav className="desktop-nav" aria-label="Primary">
           {links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
-          <Link className="btn btn-primary nav-cta" href="/contact">Start a project</Link>
+          <Link className="btn btn-primary nav-cta" href="/readiness?new=1#assistant-workspace">Start a conversation</Link>
           <ThemeToggle />
         </nav>
         <div className="mobile-actions">
@@ -75,7 +74,7 @@ export function Header() {
       {open && (
         <nav id="mobile-menu" className="mobile-nav" aria-label="Mobile">
           {links.map(([label, href]) => <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>)}
-          <Link href="/contact" onClick={() => setOpen(false)}>Start a project <span aria-hidden="true">↗</span></Link>
+          <Link href="/readiness?new=1#assistant-workspace" onClick={() => setOpen(false)}>Start a conversation <span aria-hidden="true">↗</span></Link>
         </nav>
       )}
     </header>
@@ -86,15 +85,15 @@ export function Footer() {
   return (
     <footer className="site-footer">
       <div className="container footer-intro">
-        <p className="footer-statement">Intelligent software,<br />shaped around real work.</p>
-        <Link className="footer-project-link" href="/contact">Start a project <span aria-hidden="true">↗</span></Link>
+        <p className="footer-statement">Useful software begins<br />with understanding the work.</p>
+        <Link className="footer-project-link" href="/readiness?new=1#assistant-workspace">Start a conversation <span aria-hidden="true">↗</span></Link>
       </div>
       <div className="container footer-grid">
-        <div className="footer-brand"><Logo /><p>AI-native products and intelligent systems for operators and founders.</p></div>
+        <div className="footer-brand"><Logo /><p>Founder-led product design and engineering from Manila, working globally.</p></div>
         <div><p className="eyebrow">Explore</p>{links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}</div>
-        <div><p className="eyebrow">Tools &amp; contact</p><Link href="/readiness">Readiness Advisor</Link><Link href="/contact">Contact</Link><Link href="/privacy">Privacy</Link></div>
+        <div><p className="measure-label">Tools &amp; contact</p><Link href="/readiness#assistant-workspace">The Assistant</Link><Link href="/contact">Direct contact</Link><Link href="/privacy">Privacy</Link></div>
       </div>
-      <div className="container footer-bottom"><span>© {new Date().getFullYear()} Solvin Solutions.</span><span>AI systems that solve.</span></div>
+      <div className="container footer-bottom"><span>© {new Date().getFullYear()} Solvin.</span><span>From work to working software.</span></div>
     </footer>
   );
 }

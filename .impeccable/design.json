@@ -1,0 +1,15 @@
+{
+  "northStar": "The Systems Section",
+  "breakpoints": {"mobile": "620px", "tablet": "900px"},
+  "motion": {
+    "signature": "One scroll-controlled transition from fragmented work to a recognizable product interface",
+    "durationFast": "150ms",
+    "durationTheme": "200ms",
+    "reducedMotion": "Remove timeline animation and show the complete static composition"
+  },
+  "rules": [
+    "Gold marks active state, progress, or action only.",
+    "Portfolio evidence leads before capability claims.",
+    "Architectural language must resolve into recognizable software."
+  ]
+}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { analyzeAnswer, createRecommendation } from "@/lib/claude";
+import { analyzeAnswer, createRecommendation } from "@/lib/openai";
 import { containsSensitiveData, nextStage, progressFor, questions, scoreAssessment } from "@/lib/assessment";
 import { getSession, saveTurn } from "@/lib/store";
 import { rateLimit } from "@/lib/server";

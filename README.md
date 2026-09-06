@@ -1,11 +1,11 @@
 # Solvin
 
-Website and internal product platform for Solvin, an AI product and systems studio. The public site presents AI-native web and mobile development, agents, internal tools, and workflow systems. It also includes the Readiness Advisor, lead capture, responsive light/dark themes, and production-oriented integrations.
+Website and project-discovery platform for Solvin, a product design and engineering studio. The public site presents websites, web applications, AI-powered products, mobile and desktop applications, and custom business software. It also includes The Assistant, conversational lead capture, responsive light/dark themes, and production-oriented integrations.
 
 ## Technology
 
 - Next.js 16 App Router, React 19, TypeScript, and Tailwind CSS
-- Claude through Anthropic's official SDK
+- GPT-5.6 Luna through OpenAI's official SDK
 - Supabase PostgreSQL as the production system of record
 - n8n for completion workflows, Resend for email, and Cal.com for booking
 - Zod validation, Vitest, Testing Library, and ESLint
@@ -15,7 +15,7 @@ Website and internal product platform for Solvin, an AI product and systems stud
 ```text
 src/app/             Pages, metadata, and API routes
 src/components/      Shared UI and marketing components
-src/lib/             Assessment, Claude, persistence, and server utilities
+src/lib/             Assessment, OpenAI integration, persistence, and server utilities
 public/              Brand and social assets
 supabase/migrations/ Database schema
 brand/               Brand guide and source assets
@@ -31,7 +31,7 @@ opening -> context -> pain_point -> workflow_clarity
 -> tools_data -> risk -> contact -> completed
 ```
 
-Claude extracts structured facts and writes recommendation language. Application code controls stage transitions, scoring, consent, persistence, and completion. When Claude is unavailable, deterministic extraction and recommendation fallbacks keep the assessment functional.
+GPT-5.6 Luna extracts structured facts and writes project-brief language. Application code controls stage transitions, scoring, consent, persistence, and completion. When OpenAI is unavailable, deterministic extraction and recommendation fallbacks keep the Assistant functional.
 
 ## Local Development
 
@@ -43,7 +43,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-External credentials are optional for local UI development. Without Supabase, sessions use an in-memory store and are lost when the server restarts. Without Anthropic, the deterministic assessment path is used.
+External credentials are optional for local UI development. Without Supabase, sessions use an in-memory store and are lost when the server restarts. Without OpenAI, the deterministic project-brief path is used.
 
 ## Environment Variables
 
@@ -51,8 +51,8 @@ External credentials are optional for local UI development. Without Supabase, se
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL |
 | `NEXT_PUBLIC_CALCOM_URL` | Discovery-call booking page |
-| `ANTHROPIC_API_KEY` | Server-only Claude credential. Claude runs whenever this is set. |
-| `ANTHROPIC_MODEL` | Configurable Claude model (defaults to `claude-sonnet-4-6` when unset) |
+| `OPENAI_API_KEY` | Server-only OpenAI credential. Luna runs whenever this is set. |
+| `OPENAI_MODEL` | Configurable OpenAI model (defaults to `gpt-5.6-luna` when unset) |
 | `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only database access |
 | `RESEND_API_KEY` | Contact notification delivery |

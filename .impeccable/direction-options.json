@@ -1,0 +1,93 @@
+{
+  "title": "Choose Solvin's new visual world",
+  "question": "Which world should shape a founder-led portfolio that wins trust by showing the work?",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Proofing Room",
+      "kicker": "THE ROLL",
+      "lineage": "photographic contact sheets and professional proofing tables",
+      "thesis": "Projects arrive as evidence on a dark proofing table, then expand into full working stories.",
+      "palette": ["#0B0B0C", "#F4F1E8", "#2858D6", "#A8A59D"],
+      "materials": ["matte photographic paper", "registration marks", "cool inspection light"],
+      "viewport": "A nearly full-screen project frame sits under a restrained founder statement; scrolling advances through interface, decision, and outcome frames like selecting proofs.",
+      "risk": "It needs excellent project imagery or the proofing metaphor will expose thin material.",
+      "raised": [
+        {"from": "Daylight Section", "raise": "Every reveal must explain how the system works, not merely change the picture."},
+        {"from": "Nixie Counter", "raise": "One precise signal color marks progress and active state."},
+        {"from": "Highlife Sleeve", "raise": "Display typography receives one moment of real scale and confidence."}
+      ],
+      "comp": ".impeccable/mocks/decision/assigned.webp"
+    },
+    {
+      "id": "model-pick",
+      "label": "The Working Monograph",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "architectural monographs and independent design journals",
+      "thesis": "Solvin reads like a rigorously edited book of working systems, with each project given room to speak.",
+      "palette": ["#F8F7F3", "#111111", "#244FC7", "#B7B4AA"],
+      "materials": ["uncoated stock", "editorial captions", "precise fold lines"],
+      "viewport": "A blunt statement and one oversized live project specimen share the opening spread; the portfolio continues as chapters rather than cards.",
+      "risk": "This is the most familiar direction and can become tasteful but forgettable without exceptional pacing.",
+      "comp": ".impeccable/mocks/decision/model-pick.webp"
+    },
+    {
+      "id": "challenger-daylight",
+      "label": "The Systems Section",
+      "verdict": "wins",
+      "lineage": "architectural daylight sections",
+      "thesis": "Each project is cut open in section so a business owner can see the people, decisions, data, and software working together.",
+      "palette": ["#F1EFE8", "#17191D", "#D7A52A", "#8C9AA8"],
+      "materials": ["limewashed drawing ground", "charcoal section cuts", "measured annotations"],
+      "viewport": "A continuous cutaway of a business workflow transforms as the visitor scrolls, ending as the finished Solvin product interface.",
+      "case": "It identifies with real business operations and makes Solvin's systems thinking unusually easy to understand.",
+      "risk": "The diagrams must remain human and legible rather than looking like engineering documentation.",
+      "comp": ".impeccable/mocks/decision/challenger-daylight.webp",
+      "hero": "https://impeccable.style/worlds/cards/architecture-inhabitable-space-daylight-section-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/architecture-inhabitable-space-daylight-section.webp"
+    },
+    {
+      "id": "challenger-film",
+      "label": "The Build Reel",
+      "verdict": "competitive",
+      "lineage": "hand-processed 16mm film and editing workprints",
+      "thesis": "The portfolio unfolds as a controlled sequence of before, intervention, and working result.",
+      "palette": ["#101114", "#D8D3C8", "#D86928", "#74777C"],
+      "materials": ["silver emulsion", "edge codes", "grease-pencil notes"],
+      "viewport": "A horizontal project strip scrubs with scroll while short captions explain what changed in each frame.",
+      "case": "It offers the strongest cinematic motion, but the distressed material is less naturally aligned with Solvin's precision.",
+      "risk": "Film texture can read as an effect pasted over software rather than a durable identity.",
+      "comp": ".impeccable/mocks/decision/challenger-film.webp",
+      "hero": "https://impeccable.style/worlds/cards/cinema-cinematography-editing-hand-processed-film-bloom-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/cinema-cinematography-editing-hand-processed-film-bloom.webp"
+    },
+    {
+      "id": "challenger-bebop",
+      "label": "The Hard Cut",
+      "verdict": "declined",
+      "lineage": "jazz-session anime title cards",
+      "thesis": "Projects hit as bold numbered episodes with decisive visual cuts.",
+      "palette": ["#D8A928", "#A63B2C", "#267F7B", "#111111"],
+      "materials": ["flat cel color", "print grain", "hard asymmetric bars"],
+      "viewport": "An oversized project title collides with a product silhouette and numbered session index.",
+      "case": "Memorable and energetic, but it speaks louder than the founder-led brand should.",
+      "kept": "Motion should use decisive scene changes instead of generic fade-ins.",
+      "risk": "It can overwhelm plain-language business communication.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-bebop-title-card-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/pop-culture-shelf-bebop-title-card.webp"
+    }
+  ],
+  "reroll": {"registers": ["safer", "bolder"]},
+  "buildPath": {"value": "comp", "toggle": true},
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "A polished founder studio with a clear headline, capability list, project cards, testimonials later, and a contact CTA.",
+    "palette": ["#FFFFFF", "#111827", "#2563EB"],
+    "materials": ["clean grid", "device mockups"],
+    "viewport": "A conventional split hero followed by a card-based portfolio.",
+    "risk": "Easy to understand, but difficult to remember or distinguish from another capable software studio.",
+    "comp": ".impeccable/mocks/decision/canon.webp"
+  },
+  "steer": true
+}

@@ -7,8 +7,15 @@ export type ReadinessCategory =
   | "AI-Assisted Workflow Ready" | "AI Agent or Knowledge System Candidate";
 
 export interface AssessmentFacts {
+  projectType?: "website" | "web_application" | "mobile_application" | "desktop_application" | "ai_system" | "operational_system" | "unsure";
   businessType?: string;
   teamFunction?: string;
+  projectGoal?: string;
+  targetUsers?: string;
+  currentSituation?: string;
+  desiredOutcome?: string;
+  existingAssets?: string[];
+  constraints?: string;
   workflowName?: string;
   frequency?: string;
   tools?: string[];
