@@ -13,21 +13,26 @@ const schema = z.object({
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? "local";
-  if (!rateLimit(`contact:${ip}`, 5, 60_000)) return NextResponse.json({ error: "Too many submissions." }, { status: 429 });
+  if (!await rateLimit(`contact:${ip}`, 5, 60_000)) return NextResponse.json({ error: "Too many submissions." }, { status: 429 });
   const parsed = schema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) return NextResponse.json({ error: "Please complete all required fields." }, { status: 400 });
   if (parsed.data.website) return NextResponse.json({ ok: true });
   if (process.env.RESEND_API_KEY && process.env.CONTACT_TO_EMAIL && process.env.CONTACT_FROM_EMAIL) {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: process.env.CONTACT_FROM_EMAIL,
-      to: process.env.CONTACT_TO_EMAIL,
-      replyTo: parsed.data.email,
-      subject: `Solvin website inquiry from ${parsed.data.name}`,
-      text: `Name: ${parsed.data.name}\nEmail: ${parsed.data.email}\nCompany: ${parsed.data.company ?? "Not provided"}\n\n${parsed.data.message}`,
-    });
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const result = await resend.emails.send({
+        from: process.env.CONTACT_FROM_EMAIL,
+        to: process.env.CONTACT_TO_EMAIL,
+        replyTo: parsed.data.email,
+        subject: `Solvin website inquiry from ${parsed.data.name}`,
+        text: `Name: ${parsed.data.name}\nEmail: ${parsed.data.email}\nCompany: ${parsed.data.company ?? "Not provided"}\n\n${parsed.data.message}`,
+      });
+      if (result.error) throw new Error(result.error.message);
+    } catch {
+      return NextResponse.json({ error: "The inquiry could not be delivered. Please try again." }, { status: 502 });
+    }
   } else {
-    console.info("Contact form accepted; email provider is not configured.", { name: parsed.data.name, email: parsed.data.email });
+    return NextResponse.json({ error: "Email delivery is not configured yet. Please try again later." }, { status: 503 });
   }
   return NextResponse.json({ ok: true });
 }

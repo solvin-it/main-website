@@ -9,7 +9,7 @@ const schema = z.object({ message: z.string().trim().min(1).max(1500) });
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!rateLimit(`chat:${id}`, 24, 60_000)) return NextResponse.json({ error: "Please wait before sending another message." }, { status: 429 });
+  if (!await rateLimit(`chat:${id}`, 24, 60_000)) return NextResponse.json({ error: "Please wait before sending another message." }, { status: 429 });
   const parsed = schema.safeParse(await request.json().catch(() => ({})));
   if (!parsed.success) return NextResponse.json({ error: "Message must be between 1 and 1,500 characters." }, { status: 400 });
   const session = await getSession(id);

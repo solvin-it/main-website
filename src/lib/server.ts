@@ -1,8 +1,9 @@
-import { createHmac } from "crypto";
+import { createHash } from "crypto";
+import { createClient } from "@supabase/supabase-js";
 
 const buckets = new Map<string, { count: number; resetAt: number }>();
 
-export function rateLimit(key: string, max = 30, windowMs = 60_000) {
+function memoryRateLimit(key: string, max: number, windowMs: number) {
   const now = Date.now();
   const current = buckets.get(key);
   if (!current || current.resetAt < now) {
@@ -14,11 +15,18 @@ export function rateLimit(key: string, max = 30, windowMs = 60_000) {
   return true;
 }
 
-export async function triggerN8n(payload: Record<string, unknown>) {
-  const url = process.env.N8N_WEBHOOK_URL;
-  const secret = process.env.N8N_WEBHOOK_SECRET;
-  if (!url || !secret) return;
-  const body = JSON.stringify(payload);
-  const signature = createHmac("sha256", secret).update(body).digest("hex");
-  await fetch(url, { method: "POST", headers: { "content-type": "application/json", "x-solvin-signature": signature, "x-idempotency-key": String(payload.sessionId) }, body, signal: AbortSignal.timeout(8_000) });
+export async function rateLimit(key: string, max = 30, windowMs = 60_000) {
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) return memoryRateLimit(key, max, windowMs);
+
+  const db = createClient(url, serviceKey, { auth: { persistSession: false }, db: { schema: "solvin" } });
+  const hashedKey = createHash("sha256").update(key).digest("hex");
+  const { data, error } = await db.rpc("consume_rate_limit", {
+    p_bucket_key: hashedKey,
+    p_request_limit: max,
+    p_window_seconds: Math.max(1, Math.ceil(windowMs / 1000)),
+  });
+  if (error) return memoryRateLimit(key, max, windowMs);
+  return data === true;
 }

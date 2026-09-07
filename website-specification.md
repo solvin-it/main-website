@@ -1,5 +1,7 @@
 # Solvin Solutions Website Specification
 
+> Historical planning document. Where this document mentions n8n, that architecture has been superseded: launch email delivery uses Resend directly, and future workflow services will be built in Python.
+
 ## AI Automation Workflow Service and Consulting Website
 
 ## 1. Project Overview

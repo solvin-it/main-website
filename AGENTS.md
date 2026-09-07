@@ -45,4 +45,4 @@ PRs should include a clear behavior summary, verification commands, linked issue
 
 ## Security & Configuration
 
-Copy `.env.example` to `.env.local`; never commit secrets. Apply Supabase migrations before enabling persistence. Keep n8n webhooks signed and idempotent, and avoid logging transcripts or sensitive user content.
+Copy `.env.example` to `.env.local`; never commit secrets. Apply Supabase migrations before enabling persistence. Keep email delivery idempotent, avoid logging transcripts or sensitive user content, and use Python services for future workflow automation.

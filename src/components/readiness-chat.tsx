@@ -17,6 +17,7 @@ export function ReadinessChat() {
   const [error, setError] = useState("");
   const [result, setResult] = useState<{ score: ReadinessScore; recommendation: Recommendation } | null>(null);
   const [contactSaved, setContactSaved] = useState(false);
+  const [briefDelivered, setBriefDelivered] = useState(false);
   const [contactStep, setContactStep] = useState<ContactStep>("offer");
   const [contact, setContact] = useState<Partial<LeadContact>>({});
   const endRef = useRef<HTMLDivElement>(null);
@@ -40,7 +41,7 @@ export function ReadinessChat() {
     setBusy(true); setError("");
     const params = new URLSearchParams(location.search);
     const startFresh = reset || params.get("new") === "1";
-    if (startFresh) { localStorage.removeItem("solvin-session"); setMessages([]); setContactMessages([]); setResult(null); setContactSaved(false); setContactStep("offer"); setContact({}); }
+    if (startFresh) { localStorage.removeItem("solvin-session"); setMessages([]); setContactMessages([]); setResult(null); setContactSaved(false); setBriefDelivered(false); setContactStep("offer"); setContact({}); }
     try {
       const savedId = startFresh ? null : localStorage.getItem("solvin-session");
       if (savedId) {
@@ -104,10 +105,13 @@ export function ReadinessChat() {
       const saved = await fetch(`/api/chat/sessions/${sessionId}/contact`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(contact) });
       if (!saved.ok) throw new Error((await saved.json()).error);
       const completed = await fetch(`/api/chat/sessions/${sessionId}/complete`, { method: "POST" });
-      if (!completed.ok) throw new Error((await completed.json()).error);
+      const completion = await completed.json();
+      if (!completed.ok) throw new Error(completion.error);
+      const delivered = completion.delivery === "sent";
+      setBriefDelivered(delivered);
       setContactSaved(true); setTurn(current => ({ ...current, stage: "completed", progress: 100 }));
       setContactStep("complete");
-      setContactMessages(current => [...current, { role: "assistant", text: "Thank you. Your brief has been sent to Solvin for review." }]);
+      setContactMessages(current => [...current, { role: "assistant", text: delivered ? "Thank you. A copy of the brief has been emailed to you and sent to Solvin for review." : "Thank you. Your brief has been saved for Solvin to review. Email delivery is not configured in this environment." }]);
       localStorage.removeItem("solvin-session");
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Contact details could not be saved."); }
     finally { setBusy(false); }
@@ -189,7 +193,7 @@ export function ReadinessChat() {
       <div ref={endRef} />
     </div>
     {error && <p className="chat-error" role="alert">{error}</p>}
-    {contactSaved && <div className="completion"><Check size={20} /><div><strong>Your project brief is saved.</strong><p>Solvin can now follow up using the contact details provided.</p></div><a className="btn btn-blue" href={process.env.NEXT_PUBLIC_CALCOM_URL ?? "/contact"}>Book a discovery call</a></div>}
+    {contactSaved && <div className="completion"><Check size={20} /><div><strong>{briefDelivered ? "Your project brief has been sent." : "Your project brief is saved."}</strong><p>{briefDelivered ? "A copy is in your inbox, and Solvin has received the same brief for review." : "Solvin can follow up using the contact details provided."}</p></div><a className="btn btn-blue" href={process.env.NEXT_PUBLIC_CALCOM_URL ?? "/contact"}>Book a discovery call</a></div>}
     {contactStep !== "complete" && <div className="composer-wrap">
       {!result && turn.quickReplies && <div className="quick-replies">{turn.quickReplies.map(reply => <button key={reply} onClick={() => send(reply)} disabled={busy}>{reply}</button>)}</div>}
       {result && contactStep === "offer" && <div className="quick-replies"><button onClick={() => chooseContactPath(true)}>Yes, send the brief</button><button onClick={() => chooseContactPath(false)}>Not right now</button></div>}

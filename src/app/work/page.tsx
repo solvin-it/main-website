@@ -17,7 +17,7 @@ export default function WorkPage() {
         <article><span>System</span><h3>AI assists; application logic decides.</h3><p>GPT-5.6 Luna extracts facts and writes concise project-brief language. A state machine controls progression, application code enforces consent, and Supabase remains the system of record.</p></article>
         <article><span>Current outcome</span><h3>A functioning internal product.</h3><p>The full assessment and lead flow are implemented and prepared for production credentials. No external client outcome is claimed.</p></article>
       </div>
-      <div className="case-stack"><p className="eyebrow">System stack</p><div><span>Next.js</span><span>TypeScript</span><span>OpenAI</span><span>Supabase</span><span>n8n</span><span>Resend</span><span>Cal.com</span></div></div>
+      <div className="case-stack"><p className="eyebrow">System stack</p><div><span>Next.js</span><span>TypeScript</span><span>OpenAI</span><span>Supabase</span><span>Resend</span><span>Cal.com</span></div></div>
       <div className="button-row"><Link className="btn btn-primary" href="/readiness?new=1#assistant-workspace">Try the product <ArrowRight size={17} /></Link><Link className="btn btn-secondary" href="/contact">Discuss a similar system</Link></div>
     </div></section>
   </>;

@@ -7,7 +7,7 @@ Website and project-discovery platform for Solvin, a product design and engineer
 - Next.js 16 App Router, React 19, TypeScript, and Tailwind CSS
 - GPT-5.6 Luna through OpenAI's official SDK
 - Supabase PostgreSQL as the production system of record
-- n8n for completion workflows, Resend for email, and Cal.com for booking
+- Resend for inquiry and project-brief email, and Cal.com for booking
 - Zod validation, Vitest, Testing Library, and ESLint
 
 ## Project Structure
@@ -58,16 +58,14 @@ External credentials are optional for local UI development. Without Supabase, se
 | `RESEND_API_KEY` | Contact notification delivery |
 | `CONTACT_FROM_EMAIL` | Verified Resend sender |
 | `CONTACT_TO_EMAIL` | Internal inquiry recipient |
-| `N8N_WEBHOOK_URL` | Assessment-completion workflow |
-| `N8N_WEBHOOK_SECRET` | HMAC signing secret |
 
 Never expose server credentials through `NEXT_PUBLIC_*` variables.
 
 ## Supabase and Integrations
 
-Apply `supabase/migrations/202606140001_initial_schema.sql` before enabling Supabase credentials. The migration creates leads, sessions, messages, facts, scores, recommendations, and follow-up records with constraints, indexes, deletion relationships, and row-level security.
+Apply all files in `supabase/migrations/` before enabling Supabase credentials. The migrations create the Assistant records and an atomic, hashed-key rate limiter for multi-instance production deployments.
 
-The completion webhook sends `x-solvin-signature`, an HMAC-SHA256 signature of the JSON body, and uses the session ID as `x-idempotency-key`. The n8n workflow must verify both and deduplicate completion events.
+Assistant completion sends the same project brief directly to the prospect and Solvin through Resend. Session-based idempotency keys prevent duplicate sends during retries. Future business workflows will be implemented as Python services when usage justifies them.
 
 ## Commands
 
@@ -87,10 +85,9 @@ npm start              # Serve the production build
 Before launch:
 
 1. Configure Vercel environment variables and apply the Supabase migration.
-2. Build and test the signed n8n workflow and Resend sender.
+2. Verify the Resend sender domain and test both prospect and internal project-brief delivery.
 3. Update the production domain and Cal.com URL.
-4. Replace process-local rate limiting with a distributed production store.
-5. Add API integration and end-to-end coverage for persistence, recovery, contact capture, and idempotent completion.
+4. Exercise persistence, recovery, contact capture, email retry, and idempotent completion against the production integrations.
 
 Run all checks before deployment:
 

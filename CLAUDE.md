@@ -57,7 +57,7 @@ Schema lives in `supabase/migrations/`; apply migrations before enabling Supabas
 ## Integrations & security
 
 - **Claude** (`src/lib/claude.ts`): requires both `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`; missing either disables Claude entirely (deterministic path). Uses forced tool calls + Zod parse, short timeout, no SDK retries.
-- **n8n completion webhook** (`triggerN8n` in `server.ts`): fired on session completion, HMAC-SHA256 signed via `x-solvin-signature`, with the session id as `x-idempotency-key`. The consumer must verify the signature and dedupe.
+- **Assistant brief delivery** (`deliverProjectBrief` in `email.ts`): sends matching prospect and internal copies through Resend with session-based idempotency keys. Future workflow automation should be implemented as Python services.
 - **Resend** powers `/api/contact` notifications; **Cal.com** (`NEXT_PUBLIC_CALCOM_URL`) is the booking target.
 - Service credentials are server-only — never expose them via `NEXT_PUBLIC_*`. Don't log transcripts or sensitive user content. Security headers are set globally in `next.config.ts`.
 - `rateLimit` is process-local (an in-memory Map) and must be replaced with a distributed store before production scaling.
