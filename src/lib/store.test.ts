@@ -24,7 +24,7 @@ describe("Supabase session reconstruction", () => {
         business_impact_score: 75,
         risk_manageability_score: 85,
         total_score: 85,
-        category: "AI Agent or Knowledge System Candidate",
+        category: "Ready for Solution Design",
         rationale: "Strong recurring workflow.",
       }],
       recommendations: [{
@@ -50,7 +50,7 @@ describe("Supabase session reconstruction", () => {
       businessImpact: 75,
       riskManageability: 85,
       total: 85,
-      category: "AI Agent or Knowledge System Candidate",
+      category: "Ready for Solution Design",
       rationale: "Strong recurring workflow.",
     });
     expect(session.recommendation).toEqual({

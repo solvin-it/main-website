@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: "%s | Solvin",
   },
   description:
-    "Founder-led product design and engineering for web applications, AI-native products, websites, and cross-platform software.",
+    "Product design and engineering for web applications, AI-native products, websites, and cross-platform software.",
   keywords: [
     "AI product studio",
     "AI-native application development",

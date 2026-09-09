@@ -1,13 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Bot, Check, LoaderCircle, RotateCcw, Send, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowRight, ArrowUp, Check, LoaderCircle, RotateCcw } from "lucide-react";
 import type { ChatTurn, LeadContact, ReadinessScore, Recommendation } from "@/lib/types";
 
 type Message = { role: "assistant" | "user"; text: string };
 type ContactStep = "offer" | "name" | "email" | "company" | "consent" | "declined" | "complete";
 
-export function ReadinessChat() {
+type ReadinessChatProps = {
+  surface?: "cinematic" | "standalone";
+  initialPrompt?: string;
+  onConversationStart?: () => void;
+};
+
+export function ReadinessChat({ surface = "standalone", initialPrompt, onConversationStart }: ReadinessChatProps = {}) {
   const [sessionId, setSessionId] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [contactMessages, setContactMessages] = useState<Message[]>([]);
@@ -26,22 +33,37 @@ export function ReadinessChat() {
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
-    void start();
-    if (location.hash === "#assistant-workspace") {
+    if (surface === "cinematic" && !initialPrompt) return;
+    const params = new URLSearchParams(location.search);
+    if (surface === "standalone" && params.get("new") === "1") {
+      localStorage.removeItem("solvin-session");
+    } else if (initialPrompt || localStorage.getItem("solvin-session")) {
+      void start();
+    }
+    if (surface === "standalone" && location.hash === "#assistant-workspace") {
       const frame = requestAnimationFrame(() => document.getElementById("assistant-workspace")?.scrollIntoView({ block: "start" }));
       return () => cancelAnimationFrame(frame);
     }
+    // This is intentionally a mount-only bootstrap. Subsequent conversation state
+    // changes are handled in place so the composer is never remounted.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     const messageList = endRef.current?.parentElement;
-    messageList?.scrollTo({ top: messageList.scrollHeight, behavior: "smooth" });
+    if (messageList?.scrollTo) messageList.scrollTo({ top: messageList.scrollHeight, behavior: "smooth" });
   }, [messages, contactMessages, result, contactStep]);
 
-  async function start(reset = false) {
+  async function start(reset = false, directPrompt?: string) {
     setBusy(true); setError("");
     const params = new URLSearchParams(location.search);
-    const startFresh = reset || params.get("new") === "1";
+    const promptToSend = reset ? "" : directPrompt?.trim() || initialPrompt?.trim() || params.get("prompt")?.trim();
+    const startFresh = reset || Boolean(promptToSend) || params.get("new") === "1";
     if (startFresh) { localStorage.removeItem("solvin-session"); setMessages([]); setContactMessages([]); setResult(null); setContactSaved(false); setBriefDelivered(false); setContactStep("offer"); setContact({}); }
+    if (promptToSend) {
+      setInput("");
+      setMessages([{ role: "user", text: promptToSend }]);
+      onConversationStart?.();
+    }
     try {
       const savedId = startFresh ? null : localStorage.getItem("solvin-session");
       if (savedId) {
@@ -64,28 +86,34 @@ export function ReadinessChat() {
       if (!response.ok) throw new Error(data.error);
       setSessionId(data.sessionId);
       localStorage.setItem("solvin-session", data.sessionId);
-      const initialPrompt = reset ? "" : params.get("prompt")?.trim();
-      if (initialPrompt) {
+      if (promptToSend) {
         const firstReply = await fetch(`/api/chat/sessions/${data.sessionId}/messages`, {
-          method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ message: initialPrompt.slice(0, 1500) }),
+          method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ message: promptToSend.slice(0, 1500) }),
         });
         const next = await firstReply.json();
         if (!firstReply.ok) throw new Error(next.error);
         setTurn(next);
-        setMessages([{ role: "assistant", text: data.message }, { role: "user", text: initialPrompt }, { role: "assistant", text: next.message }]);
-        history.replaceState(null, "", `${location.pathname}#assistant-workspace`);
+        setMessages([{ role: "user", text: promptToSend }, { role: "assistant", text: next.message }]);
+        if (surface === "standalone") history.replaceState(null, "", `${location.pathname}#assistant-workspace`);
       } else {
         setTurn(data);
         setMessages([{ role: "assistant", text: data.message }]);
-        if (startFresh) history.replaceState(null, "", `${location.pathname}#assistant-workspace`);
+        if (startFresh && surface === "standalone") history.replaceState(null, "", `${location.pathname}#assistant-workspace`);
       }
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Unable to start the check."); }
+    } catch (cause) {
+      if (promptToSend) { setMessages([]); setInput(promptToSend); }
+      setError(cause instanceof Error ? cause.message : "Unable to start the conversation.");
+    }
     finally { setBusy(false); }
   }
 
   async function send(value: string) {
     const message = value.trim();
-    if (!message || busy || !sessionId) return;
+    if (!message || busy) return;
+    if (!sessionId) {
+      await start(false, message);
+      return;
+    }
     setBusy(true); setError(""); setInput("");
     setMessages(current => [...current, { role: "user", text: message }]);
     try {
@@ -95,7 +123,11 @@ export function ReadinessChat() {
       setTurn(data);
       setMessages(current => [...current, { role: "assistant", text: data.message }]);
       if (data.score && data.recommendation) setResult({ score: data.score, recommendation: data.recommendation });
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "The message could not be sent."); }
+    } catch (cause) {
+      setMessages(current => current.at(-1)?.role === "user" ? current.slice(0, -1) : current);
+      setInput(message);
+      setError(cause instanceof Error ? cause.message : "The message could not be sent.");
+    }
     finally { setBusy(false); }
   }
 
@@ -176,32 +208,43 @@ export function ReadinessChat() {
   const inputType = contactStep === "email" ? "email" : "text";
   const contactPlaceholder = contactStep === "company" ? "Company name (optional)" : "Type your answer…";
 
-  return <div className="assessment-shell">
-    <div className="assessment-header">
-      <div><p className="measure-label">A conversation, not a questionnaire</p><h2>The Assistant</h2></div>
-      <button className="icon-button" onClick={() => start(true)} aria-label="Restart assessment"><RotateCcw size={17} /></button>
+  const engaged = messages.length > 0 || busy || Boolean(result);
+
+  function restart() {
+    if (surface === "cinematic") {
+      localStorage.removeItem("solvin-session");
+      setSessionId(""); setMessages([]); setContactMessages([]); setTurn({}); setInput(""); setBusy(false); setError(""); setResult(null); setContactSaved(false); setBriefDelivered(false); setContactStep("offer"); setContact({});
+      startedRef.current = true;
+      return;
+    }
+    void start(true);
+  }
+
+  return <div className={`assistant-experience assistant-${surface}${engaged ? " is-engaged" : " is-idle"}${result ? " has-brief" : ""}${contactSaved ? " is-complete" : ""}`}>
+    <div className="assistant-identity">
+      <Image src="/solvin-mark-reverse.svg" alt="" width={92} height={92} priority={surface === "cinematic"} />
+      <div><span>The Assistant</span><strong>{engaged ? "Let’s work through it." : "What do you want solved?"}</strong></div>
+      {engaged && <button className="assistant-restart" onClick={restart} aria-label="Start a new conversation"><RotateCcw size={16} /></button>}
     </div>
-    <div className="progress-track" aria-label={`${turn.progress ?? 0}% complete`}><span style={{ transform: `scaleX(${(turn.progress ?? 0) / 100})` }} /></div>
-    <div className="privacy-banner"><ShieldCheck size={18} /><span>Keep descriptions high-level. Do not share passwords, customer records, confidential documents, or sensitive personal data.</span></div>
-    <div className="message-list" aria-live="polite" aria-busy={busy}>
-      {messages.map((message, index) => <div className={`message-row ${message.role}`} key={`${message.role}-${index}`}><span className="message-avatar">{message.role === "assistant" ? <Bot size={17} /> : <UserRound size={17} />}</span><p>{message.text}</p></div>)}
+    <div className="assistant-thread" aria-live="polite" aria-busy={busy}>
+      {messages.map((message, index) => <div className={`assistant-message ${message.role}`} key={`${message.role}-${index}`}><p>{message.text}</p></div>)}
       {result && <BriefArtifact result={result} />}
-      {result && contactStep === "offer" && <div className="message-row assistant"><span className="message-avatar"><Bot size={17} /></span><p>Would you like me to send this brief to Solvin for review and follow-up?</p></div>}
-      {contactMessages.map((message, index) => <div className={`message-row ${message.role}`} key={`contact-${message.role}-${index}`}><span className="message-avatar">{message.role === "assistant" ? <Bot size={17} /> : <UserRound size={17} />}</span><p>{message.text}</p></div>)}
-      {result && contactStep === "consent" && <div className="message-row assistant"><span className="message-avatar"><Bot size={17} /></span><p>Thanks, {contact.fullName}.{contact.companyName ? ` I have this project under ${contact.companyName}.` : ""} May Solvin save this brief and contact you at {contact.email} about the project?</p></div>}
-      {busy && <div className="message-row assistant"><span className="message-avatar"><Bot size={17} /></span><p className="typing"><i /><i /><i /></p></div>}
+      {result && contactStep === "offer" && <div className="assistant-message assistant"><p>Would you like me to send this brief to Solvin for review and follow-up?</p></div>}
+      {contactMessages.map((message, index) => <div className={`assistant-message ${message.role}`} key={`contact-${message.role}-${index}`}><p>{message.text}</p></div>)}
+      {result && contactStep === "consent" && <div className="assistant-message assistant"><p>Thanks, {contact.fullName}.{contact.companyName ? ` I have this project under ${contact.companyName}.` : ""} May Solvin save this brief and contact you at {contact.email} about the project?</p></div>}
+      {busy && <div className="assistant-message assistant"><p className="assistant-thinking"><i /><i /><i /><span className="sr-only">The Assistant is responding</span></p></div>}
       <div ref={endRef} />
     </div>
-    {error && <p className="chat-error" role="alert">{error}</p>}
-    {contactSaved && <div className="completion"><Check size={20} /><div><strong>{briefDelivered ? "Your project brief has been sent." : "Your project brief is saved."}</strong><p>{briefDelivered ? "A copy is in your inbox, and Solvin has received the same brief for review." : "Solvin can follow up using the contact details provided."}</p></div><a className="btn btn-blue" href={process.env.NEXT_PUBLIC_CALCOM_URL ?? "/contact"}>Book a discovery call</a></div>}
+    {error && <div className="assistant-error" role="alert"><span>{error}</span><button onClick={() => setError("")}>Edit and resend</button></div>}
     {contactStep !== "complete" && <div className="composer-wrap">
       {!result && turn.quickReplies && <div className="quick-replies">{turn.quickReplies.map(reply => <button key={reply} onClick={() => send(reply)} disabled={busy}>{reply}</button>)}</div>}
       {result && contactStep === "offer" && <div className="quick-replies"><button onClick={() => chooseContactPath(true)}>Yes, send the brief</button><button onClick={() => chooseContactPath(false)}>Not right now</button></div>}
       {result && contactStep === "declined" && <div className="deferred-follow-up"><span>Ready when you are.</span><button onClick={() => chooseContactPath(true)}>Send this brief</button></div>}
       {result && contactStep === "consent" ? <div className="consent-actions"><p>This permits project follow-up. It does not approve a contract or final scope.</p><button className="btn btn-primary" onClick={consentAndSend} disabled={busy}>{busy ? <LoaderCircle className="spin" size={17} /> : <>I agree — send brief <ArrowRight size={17} /></>}</button><button className="text-link" onClick={() => chooseContactPath(false)} disabled={busy}>Not right now</button></div> : !result || contactMode ?
-      <form className="composer" onSubmit={event => { event.preventDefault(); if (contactMode) void sendContactAnswer(); else void send(input); }}><label className="sr-only" htmlFor="chat-input">Your answer</label>{contactMode ? <input id="chat-input" value={input} onChange={event => setInput(event.target.value)} placeholder={contactPlaceholder} type={inputType} autoComplete={contactStep === "name" ? "name" : contactStep === "email" ? "email" : "organization"} disabled={busy} /> : <textarea id="chat-input" value={input} onChange={event => setInput(event.target.value)} placeholder="Type your answer…" maxLength={1500} rows={2} disabled={busy} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); send(input); } }} />}<button aria-label="Send answer" disabled={busy || (contactStep !== "company" && !input.trim())}><Send size={18} /></button></form> : null}
+      <form className="composer assistant-composer" onSubmit={event => { event.preventDefault(); if (contactMode) void sendContactAnswer(); else void send(input); }}><label className="sr-only" htmlFor={`chat-input-${surface}`}>Your answer</label>{contactMode ? <input id={`chat-input-${surface}`} value={input} onChange={event => setInput(event.target.value)} placeholder={contactPlaceholder} type={inputType} autoComplete={contactStep === "name" ? "name" : contactStep === "email" ? "email" : "organization"} disabled={busy} /> : <textarea id={`chat-input-${surface}`} value={input} onChange={event => setInput(event.target.value)} placeholder={engaged ? "Type your answer…" : "Tell us the problem. We’ll help you solve it."} maxLength={1500} rows={engaged ? 2 : 3} disabled={busy} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void send(input); } }} />}<button aria-label={engaged ? "Send answer" : "Start the conversation"} disabled={busy || (contactStep !== "company" && !input.trim())}>{busy ? <LoaderCircle className="spin" size={18} /> : <ArrowUp size={18} />}</button></form> : null}
       {contactStep === "company" && <button className="contact-skip" onClick={skipCompany}>Skip this question</button>}
     </div>}
+    {contactSaved && <div className="assistant-completion"><Check size={18} /><div><strong>{briefDelivered ? "Your project brief has been sent." : "Your project brief is saved."}</strong><p>{briefDelivered ? "A copy is in your inbox, and Solvin has received the same brief." : "Solvin can follow up using the details you provided."}</p></div><a href={process.env.NEXT_PUBLIC_CALCOM_URL ?? "/contact"}>Book a discovery call <ArrowRight size={15} /></a></div>}
   </div>;
 }
 

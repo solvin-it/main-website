@@ -42,7 +42,7 @@ The guided assistant should ask a small number of adaptive, immediately answerab
 - Portfolio content must clearly distinguish owned products, demonstrations, experiments, and future client work. It must not invent clients, outcomes, testimonials, or performance claims.
 - The proposed prospect assistant should use Luna as its primary model to control operating cost, subject to technical validation during implementation.
 - The initial lead workflow may store conversations and structured requirements, or send a concise summary through Resend. A full CRM/dashboard is an open implementation decision and should be earned by actual usage.
-- Existing assessment logic keeps scoring, stage transitions, consent, authorization, and persistence deterministic and outside the language model.
+- The Assistant uses deterministic information-gap planning for topic selection, scoring, consent, authorization, and persistence. Luna extracts facts and proposes wording, but cannot decide completion or perform database operations.
 
 ## Brand Commitments
 
@@ -56,7 +56,8 @@ Avoid AI hype, inflated claims, faux-corporate language, decorative robots, neon
 
 ## Evidence on Hand
 
-- A functioning Readiness Advisor with deterministic assessment logic, structured model extraction, session recovery, consent-aware lead capture, and tests.
+- A functioning contextual Assistant with deterministic topic planning, structured model extraction, response-quality validation, session recovery, consent-aware lead capture, and tests.
+- A scroll-controlled cinematic homepage demonstration that moves from reflected software to the recognizable Solvin mark.
 - The current Solvin website, brand guide, logo assets, content model, and working contact flow.
 - Owned products, demonstrations, and experiments can be presented as the initial portfolio.
 - Client projects are currently being built and are not yet available as public proof.

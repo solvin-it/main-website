@@ -96,7 +96,11 @@ Buttons are direct, compact, and rectangular. The gold button is the signal acti
 
 Cards are not the default page structure. Work is presented as editorial evidence, continuous sections, or full product specimens. Inputs remain flat, high-contrast, and recoverable in error states.
 
-The signature component is the Systems Section: an authored workflow plate combined with a real interface whose scroll progression moves from observation to a finished system.
+The signature component is the cinematic Solvin mark: one pinned, scroll-controlled sequence that moves from software reflected in eyeglasses to folded glasses settling above a bowtie. The rendered arrangement then crossfades to the exact official mark. It is a visual statement about seeing the work clearly and turning it into a composed result.
+
+The Assistant is the final state of that sequence, not a separate product window. Its logo, question, message stream, and composer share one persistent shell. On the first message, the large centered identity compresses into a quiet conversation header while the existing composer moves to the bottom and the message stream opens above it. The structural transition lasts 500ms with confident deceleration; individual messages arrive in 220ms. Reduced-motion users receive the same state change without spatial movement.
+
+The canonical Assistant has no outer card, toolbar, avatars, privacy banner, or visible completion meter. Assistant replies sit directly on the charcoal field, visitor replies use restrained dark bubbles, and daylight gold is reserved for send and confirmation actions. The generated brief unfolds inline as an editorial document with rules rather than nested cards. Contact details, consent, deferral, and delivery confirmation remain part of the same conversation.
 
 ## Do's and Don'ts
 
@@ -105,6 +109,9 @@ The signature component is the Systems Section: an authored workflow plate combi
 - Do show functioning interfaces and label demonstrations honestly.
 - Do use business language before technical terminology.
 - Do use one composed scroll-driven transformation with a static reduced-motion equivalent.
+- Do use intentional edits when they protect physical credibility; the motion should feel continuous even when the footage is assembled from separate shots.
+- Do preserve the official SVG as the final visual authority rather than asking generated footage to reproduce the logo exactly.
+- Do keep the Assistant composer visually and structurally continuous from the hero prompt through the completed brief.
 - Do let the founder voice be direct and accountable.
 
 ### Don't
@@ -113,4 +120,6 @@ The signature component is the Systems Section: an authored workflow plate combi
 - Don't build pages from equal icon-and-copy cards.
 - Don't use literal gentleman props, faux luxury, robots, circuits, or neon AI imagery.
 - Don't let architectural styling obscure that Solvin builds software.
+- Don't generate visible folding, hinge movement, or complex rotation of the glasses; duplicated temples and unstable geometry immediately break the illusion.
 - Don't invent client names, testimonials, outcomes, or metrics.
+- Don't replace the hero composer with an assessment window, dashboard frame, or second chat component after submission.

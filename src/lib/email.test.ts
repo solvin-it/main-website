@@ -10,7 +10,7 @@ import type { SessionRecord } from "./store";
 const session: SessionRecord = {
   id: "session-1", stage: "contact", answerCount: 6, facts: {},
   lead: { fullName: "Morgan", email: "morgan@example.com", companyName: "Northstar", consentToContact: true },
-  score: { workflowClarity: 80, repetition: 80, dataToolReadiness: 80, businessImpact: 80, riskManageability: 80, total: 80, category: "AI-Assisted Workflow Ready", rationale: "Ready." },
+  score: { workflowClarity: 80, repetition: 80, dataToolReadiness: 80, businessImpact: 80, riskManageability: 80, total: 80, category: "Ready for Solution Design", rationale: "Ready." },
   recommendation: { workflowSummary: "Customer request handling", opportunity: "Respond consistently.", blocker: "Confirm ownership.", firstProject: "A request portal.", recommendedService: "Web application", nextAction: "Review the brief." },
 };
 

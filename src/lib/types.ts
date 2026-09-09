@@ -1,10 +1,14 @@
-export type AssessmentStage =
-  | "opening" | "context" | "pain_point" | "workflow_clarity"
-  | "tools_data" | "risk" | "summary" | "contact" | "completed";
+export type DiscoveryTopic =
+  | "opening" | "context" | "audience" | "ideal_client" | "offer"
+  | "pain_point" | "desired_outcome" | "success_metric"
+  | "workflow_clarity" | "current_acquisition" | "core_task"
+  | "tools_data" | "credibility" | "source_information" | "risk";
+
+export type AssessmentStage = DiscoveryTopic | "summary" | "contact" | "completed";
 
 export type ReadinessCategory =
-  | "Process First" | "Simple Automation Ready"
-  | "AI-Assisted Workflow Ready" | "AI Agent or Knowledge System Candidate";
+  | "Discovery Needed" | "Focused First Release"
+  | "Strong Project Foundation" | "Ready for Solution Design";
 
 export interface AssessmentFacts {
   projectType?: "website" | "web_application" | "mobile_application" | "desktop_application" | "ai_system" | "operational_system" | "unsure";
@@ -25,6 +29,14 @@ export interface AssessmentFacts {
   humanApproval?: "always" | "sometimes" | "not_needed" | "unknown";
   sensitiveData?: boolean;
   painPoint?: string;
+  idealClient?: string;
+  offer?: string;
+  acquisitionChannels?: string[];
+  credibilityAssets?: string[];
+  successMetric?: string;
+  coreTask?: string;
+  sourceInformation?: string[];
+  skippedTopics?: DiscoveryTopic[];
 }
 
 export interface ReadinessScore {

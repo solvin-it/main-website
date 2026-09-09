@@ -3,5 +3,5 @@ import path from "node:path";
 
 export default defineConfig({
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
-  test: { environment: "jsdom", include: ["src/**/*.test.ts"], coverage: { reporter: ["text", "json"] } },
+  test: { environment: "jsdom", include: ["src/**/*.test.ts", "src/**/*.test.tsx"], coverage: { reporter: ["text", "json"] } },
 });

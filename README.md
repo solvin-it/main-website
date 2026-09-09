@@ -22,16 +22,54 @@ brand/               Brand guide and source assets
 website-specification.md  Original MVP specification
 ```
 
+## Homepage Motion
+
+The homepage hero contains one scroll-controlled cinematic sequence implemented by
+`src/components/cinematic-mark.tsx`. It maps the visitor's scroll position to an
+eight-second H.264 video rather than autoplaying it:
+
+1. a software interface is reflected through the glasses;
+2. the camera pulls back to reveal the complete frame;
+3. an intentional edit moves to the bowtie on the table;
+4. already-folded glasses descend into the Solvin mark;
+5. the rendered composition crossfades to the exact SVG logo.
+
+The web asset is `public/media/solvin-cinematic-mark.mp4`; its poster is stored
+beside it. The MP4 is silent, fast-start enabled, and encoded with frequent
+keyframes for responsive seeking. Source storyboards and generated masters remain
+under `brand/storyboards/`.
+
+Do not replace the intentional cut with generated folding or rotating mechanics.
+Video models have produced duplicated glasses temples in those transitions. If the
+asset is regenerated, preserve the two mechanically simple shots, keep the final
+logo alignment, and re-encode the combined file with frequent keyframes.
+
+Visitors with `prefers-reduced-motion: reduce`, or visitors whose browser cannot
+load the video, receive the static official Solvin mark. The page's proposition and
+actions remain available without the animation.
+
+The film resolves into the canonical Assistant. The centered identity and composer
+are one persistent interface: after the visitor submits a problem, the identity
+compresses, the message stream opens above the same composer, and the film remains
+locked on its resolved state. The homepage URL does not change. `/readiness` uses
+the same Assistant presentation without the cinematic footage. Generated briefs,
+contact extraction, consent, deferral, and delivery confirmation all remain inline
+in the conversation.
+
 Public routes include `/work`, `/capabilities`, `/about`, `/contact`, `/readiness`, and `/privacy`. The legacy `/services` route permanently redirects to `/capabilities`.
 
-The readiness flow is application-controlled:
+The Assistant uses an application-controlled information-gap planner rather than
+a fixed questionnaire. It classifies the visitor's problem, skips facts already
+provided, asks one contextual question at a time, and prepares a brief after
+enough useful context—normally within three to five substantive answers and no
+later than six.
 
-```text
-opening -> context -> pain_point -> workflow_clarity
--> tools_data -> risk -> contact -> completed
-```
-
-GPT-5.6 Luna extracts structured facts and writes project-brief language. Application code controls stage transitions, scoring, consent, persistence, and completion. When OpenAI is unavailable, deterministic extraction and recommendation fallbacks keep the Assistant functional.
+GPT-5.6 Luna extracts structured facts, offers restrained interpretations, and
+proposes follow-up wording. Application code independently selects the next
+topic and validates the wording before it is shown. Scoring, consent,
+persistence, and completion remain deterministic. When OpenAI is unavailable
+or its proposed question fails validation, topic-specific fallbacks keep the
+Assistant functional.
 
 ## Local Development
 

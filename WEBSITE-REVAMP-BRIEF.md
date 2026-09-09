@@ -39,25 +39,23 @@ Solvin does not begin with a technology list. It opens the work, understands how
 
 ### First viewport
 
-A continuous horizontal business-workflow section occupies most of the screen. On the left, people perform fragmented work across a conversation, inbox, document, and spreadsheet. A narrow gold signal passes through the scene. As it reaches the right, the same work resolves into a clear product interface.
-
-Primary line:
-
-> From the way work happens to the software that improves it.
-
-Supporting identity is concise: founder-led Solvin, based in Manila and working globally. The main action is **Explore the work**. **Talk through your problem** opens the guided assistant.
+The cinematic footage owns the opening viewport. Round black eyeglasses reflect a dark software interface, connecting the Solvin identity directly to the work without a competing text overlay. As the sequence resolves, the exact Solvin mark becomes the identity of the guided Assistant and the visitor can describe a problem directly in the hero.
 
 ### Signature interaction
 
-The homepage uses one scroll-controlled transformation:
+The homepage uses one scroll-controlled cinematic transformation:
 
-1. **Observe:** the operational scene is visible but fragmented.
-2. **Trace:** the gold signal follows documents, handoffs, approvals, and decisions.
-3. **Clarify:** unnecessary elements recede and the system structure becomes legible.
-4. **Build:** the architectural section transforms into a real Solvin product interface.
-5. **Inspect:** the finished project opens into its case study.
+1. **Reflect:** a working software interface appears through the eyeglass lenses.
+2. **Reveal:** the camera pulls back to show the complete glasses.
+3. **Edit:** an intentional cut moves to a bowtie waiting on the table.
+4. **Resolve:** already-folded glasses descend into the logo arrangement.
+5. **Recognize:** the rendered objects crossfade to the exact official Solvin mark.
 
-The scene remains pinned while scroll position controls progress. The production approach should prefer transforms, opacity, masks, and CSS scroll timelines. Canvas or a frame sequence is justified only if the chosen artwork cannot be decomposed efficiently. Reduced-motion users receive a clear static before/after composition and ordinary navigation.
+The scene remains pinned while scroll position controls the video time. The footage is assembled from mechanically simple shots because generated hinge movement and three-dimensional rotation produced duplicated temples and visibly unstable geometry. The cut is therefore part of the direction, not a temporary defect.
+
+The production MP4 is silent, fast-start enabled, and encoded with frequent keyframes so seeking follows scroll input. The official SVG owns the final frame. Reduced-motion users and video-load failures receive that static mark with ordinary navigation and no loss of meaning.
+
+The resolved hero and the Assistant are one continuous interface. The same composer remains mounted after the first submission; the large identity compresses, a message stream opens above it, and the film stays resolved. There is no navigation or assessment-window replacement. `/readiness` uses the same canonical chat design. The project brief appears inline as an editorial document, followed by conversational contact capture and explicit consent.
 
 ### Cross-surface reach
 
@@ -84,7 +82,7 @@ Avoid separate overlapping pages for Services and Capabilities. **What we build*
 
 ### Homepage sequence
 
-1. **Systems Section hero** — visible transformation from work to software.
+1. **Cinematic identity hero** — visible transformation from reflected software to the Solvin mark.
 2. **Selected work** — three strong owned products or demonstrations, with one featured deeply.
 3. **What we build** — web applications, AI-native applications, websites, and cross-platform products, explained through problems rather than technology labels.
 4. **How Solvin works** — understand, shape, build, validate; concise and evidence-oriented.
@@ -139,24 +137,26 @@ Use “I” when describing founder judgment, accountability, or personal experi
 
 ## 6. Guided Prospect Assistant
 
-Working name: **Solvin Guide**. Avoid presenting it as a magical AI or as a substitute for a human conversation.
+The public name is **The Assistant**. Avoid presenting it as magical AI or as a substitute for a human conversation.
 
 ### Visitor experience
 
-The assistant opens with one low-effort question:
+The Assistant opens by inviting the visitor to describe the problem in their own
+words. A deterministic planner classifies the request and selects the most
+valuable missing topic for a website or lead-generation effort, application, AI
+system, internal business system, or still-unclear business problem.
 
-> What part of running your business feels more difficult or repetitive than it should?
+It asks one question at a time, extracts all supported facts from each answer,
+and skips anything the visitor has already explained. Acknowledgments should add
+continuity rather than paraphrase; short insights are included only when useful.
+The Assistant prepares a brief after sufficient context, normally within three
+to five substantive answers and no later than six.
 
-It asks one question at a time and adapts from the answer. The useful discovery sequence is:
-
-1. The work or problem in the visitor's own words.
-2. Who handles it today.
-3. What they currently use: email, chat, documents, spreadsheets, existing software, or something else.
-4. What tends to go wrong, take too long, or get missed.
-5. What a better result would look like.
-6. Whether this is exploratory, planned, or urgent.
-
-Questions should be answerable in a sentence. The assistant can offer examples when someone is unsure, summarize periodically, and skip questions already answered. It must not ask for budgets, databases, APIs, model choices, or architecture in the opening conversation.
+Questions should be answerable in a sentence. The Assistant accepts uncertainty
+without repeating the same topic, avoids ambiguous pronouns and biographical
+recaps, and does not prescribe a website, application, AI, or automation unless
+the visitor's stated problem supports it. It must not ask for databases, APIs,
+model choices, or architecture in the opening conversation.
 
 ### Visitor output
 
@@ -228,9 +228,9 @@ Until then, structured storage plus a strong email summary gives most of the val
 
 ## 8. Responsive and Accessibility Behavior
 
-- Desktop uses the complete horizontal section and pinned scroll transformation.
-- Tablet simplifies annotations and shortens the transformation.
-- Mobile converts the section into stacked moments: current work, intervention, finished interface.
+- Desktop uses the complete pinned cinematic transformation.
+- Tablet retains the sequence with a shorter visual frame.
+- Mobile retains the same scroll relationship with responsive cropping; the proposition remains outside the video.
 - Essential meaning never depends on animation.
 - All text and controls remain legible at 200% zoom.
 - Motion respects `prefers-reduced-motion` and does not trap scrolling.

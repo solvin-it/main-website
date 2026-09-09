@@ -183,12 +183,12 @@ export async function getSession(id: string): Promise<SessionRecord | null> {
   return sessionFromRow(data as unknown as SessionRow);
 }
 
-export async function saveTurn(record: SessionRecord, userMessage: string, assistantMessage: string) {
+export async function saveTurn(record: SessionRecord, userMessage: string, assistantMessage: string, assistantMetadata: Record<string, unknown> = {}) {
   const db = supabase();
   if (!db) { memory.set(record.id, record); return; }
   await db.from("chat_messages").insert([
     { session_id: record.id, sender: "user", message_text: userMessage, message_type: "text" },
-    { session_id: record.id, sender: "assistant", message_text: assistantMessage, message_type: "text" },
+    { session_id: record.id, sender: "assistant", message_text: assistantMessage, message_type: "text", metadata: assistantMetadata },
   ]);
   await db.from("chat_sessions").update({ current_stage: record.stage, answer_count: record.answerCount, updated_at: new Date().toISOString() }).eq("id", record.id);
   for (const [fact_key, fact_value] of Object.entries(record.facts)) {

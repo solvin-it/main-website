@@ -89,7 +89,7 @@ export function Footer() {
         <Link className="footer-project-link" href="/readiness?new=1#assistant-workspace">Start a conversation <span aria-hidden="true">↗</span></Link>
       </div>
       <div className="container footer-grid">
-        <div className="footer-brand"><Logo /><p>Founder-led product design and engineering from Manila, working globally.</p></div>
+        <div className="footer-brand"><Logo /><p>Product design and engineering from Manila, working globally.</p></div>
         <div><p className="eyebrow">Explore</p>{links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}</div>
         <div><p className="measure-label">Tools &amp; contact</p><Link href="/readiness#assistant-workspace">The Assistant</Link><Link href="/contact">Direct contact</Link><Link href="/privacy">Privacy</Link></div>
       </div>
