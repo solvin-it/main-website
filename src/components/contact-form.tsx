@@ -8,14 +8,15 @@ export function ContactForm() {
   const [error, setError] = useState("");
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setState("sending"); setError("");
     try {
-      const data = Object.fromEntries(new FormData(event.currentTarget));
+      const data = Object.fromEntries(new FormData(form));
       const response = await fetch("/api/contact", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(data) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.error ?? "The inquiry could not be sent.");
       setState("sent");
-      event.currentTarget.reset();
+      form.reset();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "The inquiry could not be sent. Please try again.");
       setState("error");
@@ -23,8 +24,8 @@ export function ContactForm() {
   }
   return <form className="contact-form inquiry-form" onSubmit={submit}>
     <div><p className="eyebrow">Project inquiry</p><h2>Tell us what you are trying to improve or create.</h2></div>
-    <div className="form-grid"><label><span className="label">Name *</span><input className="field" name="name" required minLength={2} /></label><label><span className="label">Email *</span><input className="field" name="email" type="email" required /></label></div>
-    <label><span className="label">Company</span><input className="field" name="company" /></label>
+    <div className="form-grid"><label><span className="label">Name *</span><input className="field" name="name" autoComplete="name" required minLength={2} /></label><label><span className="label">Email *</span><input className="field" name="email" type="email" autoComplete="email" required /></label></div>
+    <label><span className="label">Company</span><input className="field" name="company" autoComplete="organization" /></label>
     <label><span className="label">What are you looking to build or improve? *</span><textarea className="field" name="message" required minLength={20} placeholder="Describe the product idea, recurring work, current tools, and what a useful outcome would look like." /></label>
     <label className="honeypot" aria-hidden="true">Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
     <button className="btn btn-primary" disabled={state === "sending"}>{state === "sending" ? <LoaderCircle className="spin" size={17} /> : <>Send inquiry <ArrowRight size={17} /></>}</button>

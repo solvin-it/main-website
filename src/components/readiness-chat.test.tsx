@@ -82,3 +82,24 @@ describe("standalone Assistant", () => {
     expect(screen.getByPlaceholderText("Tell us the problem. We’ll help you solve it.")).toBeTruthy();
   });
 });
+
+describe("workflow example handoff", () => {
+  it("starts a fresh conversation with the URL example even when new=1 is present", async () => {
+    const prompt = "We need to find answers across our internal documents with source references.";
+    history.replaceState(null, "", `/readiness?new=1&prompt=${encodeURIComponent(prompt)}#assistant-workspace`);
+    localStorage.setItem("solvin-session", "previous-session");
+    const fetchMock = mockConversation();
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      render(<ReadinessChat surface="standalone" />);
+      await waitFor(() => expect(screen.getByText(replyTurn.message)).toBeTruthy());
+      expect(screen.getByText(prompt)).toBeTruthy();
+      expect(fetchMock.mock.calls[0][0]).toBe("/api/chat/sessions");
+      expect(JSON.parse(fetchMock.mock.calls[1][1].body).message).toBe(prompt);
+      expect(localStorage.getItem("solvin-session")).toBe("session-1");
+      expect(location.search).toBe("");
+    } finally {
+      history.replaceState(null, "", "/");
+    }
+  });
+});

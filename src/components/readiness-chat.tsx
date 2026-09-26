@@ -37,7 +37,8 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
     const params = new URLSearchParams(location.search);
     if (surface === "standalone" && params.get("new") === "1") {
       localStorage.removeItem("solvin-session");
-    } else if (initialPrompt || localStorage.getItem("solvin-session")) {
+    }
+    if (initialPrompt || params.get("prompt")?.trim() || localStorage.getItem("solvin-session")) {
       void start();
     }
     if (surface === "standalone" && location.hash === "#assistant-workspace") {
