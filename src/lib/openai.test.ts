@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { create } = vi.hoisted(() => ({ create: vi.fn() }));
 
@@ -9,6 +9,36 @@ vi.mock("openai", () => ({
 }));
 
 import { analyzeAnswer, createAssistantTurn, extractContactDetails, validateAssistantMessage } from "./openai";
+
+describe("model configuration", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.stubEnv("OPENAI_API_KEY", "test-key");
+    create.mockReset();
+    create.mockResolvedValue({ output_text: JSON.stringify({ acknowledgment: "Understood.", facts: {} }) });
+  });
+
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("defaults to GPT-6 Luna with strict structured output and no reasoning or storage", async () => {
+    vi.stubEnv("OPENAI_MODEL", "");
+    const { analyzeAnswer: analyze } = await import("./openai");
+    await analyze("opening", "We need a website", {});
+    expect(create).toHaveBeenCalledWith(expect.objectContaining({
+      model: "gpt-6-luna",
+      store: false,
+      reasoning: { effort: "none" },
+      text: { format: expect.objectContaining({ type: "json_schema", strict: true }) },
+    }));
+  });
+
+  it("honors an explicit deployment model override", async () => {
+    vi.stubEnv("OPENAI_MODEL", "deployment-model");
+    const { analyzeAnswer: analyze } = await import("./openai");
+    await analyze("opening", "We need a website", {});
+    expect(create).toHaveBeenCalledWith(expect.objectContaining({ model: "deployment-model" }));
+  });
+});
 
 describe("analyzeAnswer", () => {
   beforeEach(() => {

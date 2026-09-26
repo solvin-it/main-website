@@ -40,7 +40,7 @@ const contactDetailsSchema = z.object({
   roleTitle: z.string().max(160).nullable(),
 });
 
-const MODEL = process.env.OPENAI_MODEL || "gpt-5.6-luna";
+const MODEL = process.env.OPENAI_MODEL || "gpt-6-luna";
 
 function client() {
   return process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 15_000, maxRetries: 1 }) : null;
