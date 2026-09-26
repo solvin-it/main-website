@@ -5,7 +5,7 @@ Website and project-discovery platform for Solvin, a product design and engineer
 ## Technology
 
 - Next.js 16 App Router, React 19, TypeScript, and Tailwind CSS
-- GPT-5.6 Luna through OpenAI's official SDK
+- GPT-6 Luna through OpenAI's official SDK
 - Supabase PostgreSQL as the production system of record
 - Resend for inquiry and project-brief email, and Cal.com for booking
 - Zod validation, Vitest, Testing Library, and ESLint
@@ -22,41 +22,35 @@ brand/               Brand guide and source assets
 website-specification.md  Original MVP specification
 ```
 
-## Homepage Motion
+## Homepage and 3D experience
 
-The homepage hero contains one scroll-controlled cinematic sequence implemented by
-`src/components/cinematic-mark.tsx`. It maps the visitor's scroll position to an
-eight-second H.264 video rather than autoplaying it:
+The homepage pairs immediately available HTML copy and navigation with an interactive
+Three.js scene, loaded through React Three Fiber. `src/components/hero-scene.tsx`
+handles capability detection, reduced motion, viewport visibility, drag input, and
+a keyboard-accessible front/perspective control. `src/components/glasses-scene.tsx`
+models the glasses procedurally, including beveled frames, lenses, hinges, nose
+pads, and curved temples. Its studio environment is generated locally; no remote
+models, textures, or environment files are required.
 
-1. a software interface is reflected through the glasses;
-2. the camera pulls back to reveal the complete frame;
-3. an intentional edit moves to the bowtie on the table;
-4. already-folded glasses descend into the Solvin mark;
-5. the rendered composition crossfades to the exact SVG logo.
+Rendering is on demand, with a capped pixel ratio and damped movement. Scroll and
+pointer drags and keyboard rotation request frames while the hero is visible.
+Both axes support full turns around the model’s center, preserve the chosen angle,
+and offer front-view and reset controls. Reduced-motion visitors,
+WebGL failures, and loading failures receive the official static mark. All primary
+content and navigation remain usable without the scene.
 
-The web asset is `public/media/solvin-cinematic-mark.mp4`; its poster is stored
-beside it. The MP4 is silent, fast-start enabled, and encoded with frequent
-keyframes for responsive seeking. Source storyboards and generated masters remain
-under `brand/storyboards/`.
+The homepage embeds the working Assistant directly, with prominent desktop and
+mobile entry points, and provides three illustrative workflow examples. Selecting an example updates the diagram and carries
+that example into a new Assistant conversation. These are demonstrations, not client
+outcome claims. `/readiness` hosts the focused conversation, project brief, contact
+consent, and delivery states.
 
-Do not replace the intentional cut with generated folding or rotating mechanics.
-Video models have produced duplicated glasses temples in those transitions. If the
-asset is regenerated, preserve the two mechanically simple shots, keep the final
-logo alignment, and re-encode the combined file with frequent keyframes.
+The shared visual foundation lives in `src/app/foundation.css`; the redesign is
+implemented in `src/components/revamp.css`. Existing marketing and Assistant styles
+remain available for their component-specific layouts. The earlier cinematic video
+components and source footage are retained as unused historical assets.
 
-Visitors with `prefers-reduced-motion: reduce`, or visitors whose browser cannot
-load the video, receive the static official Solvin mark. The page's proposition and
-actions remain available without the animation.
-
-The film resolves into the canonical Assistant. The centered identity and composer
-are one persistent interface: after the visitor submits a problem, the identity
-compresses, the message stream opens above the same composer, and the film remains
-locked on its resolved state. The homepage URL does not change. `/readiness` uses
-the same Assistant presentation without the cinematic footage. Generated briefs,
-contact extraction, consent, deferral, and delivery confirmation all remain inline
-in the conversation.
-
-Public routes include `/work`, `/capabilities`, `/about`, `/contact`, `/readiness`, and `/privacy`. The legacy `/services` route permanently redirects to `/capabilities`.
+Public routes include `/capabilities`, `/about`, `/contact`, `/readiness`, and `/privacy`. The legacy `/services` route permanently redirects to `/capabilities`; `/work` redirects to the working Assistant on the homepage.
 
 The Assistant uses an application-controlled information-gap planner rather than
 a fixed questionnaire. It classifies the visitor's problem, skips facts already
@@ -64,7 +58,7 @@ provided, asks one contextual question at a time, and prepares a brief after
 enough useful context—normally within three to five substantive answers and no
 later than six.
 
-GPT-5.6 Luna extracts structured facts, offers restrained interpretations, and
+GPT-6 Luna extracts structured facts, offers restrained interpretations, and
 proposes follow-up wording. Application code independently selects the next
 topic and validates the wording before it is shown. Scoring, consent,
 persistence, and completion remain deterministic. When OpenAI is unavailable
@@ -90,7 +84,7 @@ External credentials are optional for local UI development. Without Supabase, se
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL |
 | `NEXT_PUBLIC_CALCOM_URL` | Discovery-call booking page |
 | `OPENAI_API_KEY` | Server-only OpenAI credential. Luna runs whenever this is set. |
-| `OPENAI_MODEL` | Configurable OpenAI model (defaults to `gpt-5.6-luna` when unset) |
+| `OPENAI_MODEL` | Configurable OpenAI model (defaults to `gpt-6-luna` when unset) |
 | `SUPABASE_URL` | Supabase project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only database access |
 | `RESEND_API_KEY` | Contact notification delivery |

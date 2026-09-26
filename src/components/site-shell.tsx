@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const links = [
-  ["What we build", "/capabilities"],
-  ["How we work", "/#method"],
-  ["About Jose", "/about"],
+  ["Capabilities", "/capabilities"],
+  ["Approach", "/#method"],
+  ["About", "/about"],
 ] as const;
 
 export function ThemeToggle() {
@@ -45,6 +46,8 @@ export function Logo() {
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const assistantHref = pathname === "/" ? "#assistant-workspace" : "/readiness#assistant-workspace";
 
   useEffect(() => {
     if (!open) return;
@@ -60,11 +63,12 @@ export function Header() {
       <div className="container header-inner">
         <Logo />
         <nav className="desktop-nav" aria-label="Primary">
-          {links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
-          <Link className="btn btn-primary nav-cta" href="/readiness?new=1#assistant-workspace">Start a conversation</Link>
+          {links.map(([label, href]) => <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>{label}</Link>)}
+          <Link className="btn btn-primary nav-cta" href={assistantHref}>The Assistant <ArrowUpRight size={15} /></Link>
           <ThemeToggle />
         </nav>
         <div className="mobile-actions">
+          <Link className="btn btn-primary mobile-assistant-link" href={assistantHref} onClick={() => setOpen(false)}>The Assistant <ArrowUpRight size={14} /></Link>
           <ThemeToggle />
           <button className="icon-button" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen(!open)}>
             <span className="sr-only">Toggle navigation</span>{open ? <X size={19} /> : <Menu size={19} />}
@@ -73,8 +77,10 @@ export function Header() {
       </div>
       {open && (
         <nav id="mobile-menu" className="mobile-nav" aria-label="Mobile">
-          {links.map(([label, href]) => <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>)}
-          <Link href="/readiness?new=1#assistant-workspace" onClick={() => setOpen(false)}>Start a conversation <span aria-hidden="true">↗</span></Link>
+          {links.map(([label, href]) => <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>)}
+          <Link href={assistantHref} onClick={() => setOpen(false)}>Start a conversation <span aria-hidden="true">↗</span></Link>
+          <Link href="/contact" onClick={() => setOpen(false)}>Direct contact <span aria-hidden="true">↗</span></Link>
+          <div className="mobile-menu-theme"><ThemeToggle /></div>
         </nav>
       )}
     </header>
@@ -85,15 +91,15 @@ export function Footer() {
   return (
     <footer className="site-footer">
       <div className="container footer-intro">
-        <p className="footer-statement">Useful software begins<br />with understanding the work.</p>
-        <Link className="footer-project-link" href="/readiness?new=1#assistant-workspace">Start a conversation <span aria-hidden="true">↗</span></Link>
+        <p className="footer-statement">Something on your mind?<br /><span>Let’s make it work.</span></p>
+        <Link className="footer-project-link" href="/readiness#assistant-workspace">Start a conversation <ArrowUpRight size={23} /></Link>
       </div>
       <div className="container footer-grid">
-        <div className="footer-brand"><Logo /><p>Product design and engineering from Manila, working globally.</p></div>
+        <div className="footer-brand"><Logo /><p>Independent thinking. Thoughtful engineering.<br />From Manila, for a world of possibilities.</p></div>
         <div><p className="eyebrow">Explore</p>{links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}</div>
         <div><p className="measure-label">Tools &amp; contact</p><Link href="/readiness#assistant-workspace">The Assistant</Link><Link href="/contact">Direct contact</Link><Link href="/privacy">Privacy</Link></div>
       </div>
-      <div className="container footer-bottom"><span>© {new Date().getFullYear()} Solvin.</span><span>From work to working software.</span></div>
+      <div className="container footer-bottom"><span>© {new Date().getFullYear()} Solvin. Thoughtfully made.</span><span>A clearer perspective. A better way forward.</span></div>
     </footer>
   );
 }

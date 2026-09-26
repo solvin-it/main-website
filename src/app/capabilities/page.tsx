@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
-import { Engagements, FinalCta, PracticeGrid, SectionHeading } from "@/components/marketing";
+import { AppWindow, BrainCircuit, Globe2, Smartphone } from "lucide-react";
+import { Engagements, Faqs, FinalCta } from "@/components/marketing";
 
-export const metadata: Metadata = { title: "What we build", description: "Web applications, AI-native products, websites, and cross-platform software designed around real work." };
+export const metadata: Metadata = { title: "Capabilities", description: "Thoughtful websites, web and mobile applications, and intelligent systems. Designed and engineered by Solvin." };
+
+const offerings = [
+  { icon: Globe2, title: "A website worth remembering.", text: "For businesses ready for a stronger first impression. We turn your positioning into a distinctive, accessible digital experience with a clear path to getting in touch.", tags: ["Brand websites", "Portfolios", "Interactive experiences"] },
+  { icon: AppWindow, title: "Software that fits the work.", text: "For teams working around the limitations of disconnected tools. Custom portals, dashboards, and applications bring the right information and actions together.", tags: ["Web applications", "Customer portals", "Internal tools"] },
+  { icon: BrainCircuit, title: "Intelligence with a purpose.", text: "For work that needs better answers, less repetition, or clearer decisions. We build assistants and connected workflows with useful context and human oversight.", tags: ["AI assistants", "Knowledge retrieval", "Workflow automation"] },
+  { icon: Smartphone, title: "A product that goes with you.", text: "For experiences that need to live beyond a browser tab. Mobile and desktop applications designed around the devices, environments, and people using them.", tags: ["Mobile applications", "Cross-platform", "Desktop tools"] },
+];
 
 export default function CapabilitiesPage() {
   return <>
-    <section className="page-hero"><div className="container page-hero-grid"><div><p className="measure-label">What we build</p><h1 className="display">The right form for the work.</h1></div><div className="page-hero-aside"><p className="subtitle">Start with the business situation. Solvin then shapes the website, application, AI capability, or cross-platform product that makes it clearer and easier to handle.</p></div></div></section>
-    <section className="section"><div className="container"><PracticeGrid detailed /></div></section>
-    <section className="section section-tone"><div className="container"><SectionHeading eyebrow="Engagement models" title="Start at the level the problem requires." text="The engagement changes with the maturity of the idea, but the focus stays on shipping the smallest useful system with a clear path forward." /><Engagements /></div></section>
-    <section className="section"><div className="container capability-groups">
-      <article className="capability-group"><h2>Product and interface</h2><div className="capability-columns"><div><h3>Experience design</h3><p>Turn business and user context into a focused product structure and clear interaction model.</p><ul><li>Product framing and requirements</li><li>User journeys and interface systems</li><li>Responsive web and mobile design</li></ul></div><div><h3>Application engineering</h3><p>Build accessible, production-minded interfaces and the services that make them useful.</p><ul><li>Next.js and TypeScript applications</li><li>Mobile and cross-platform experiences</li><li>APIs, authentication, and data flows</li></ul></div></div></article>
-      <article className="capability-group"><h2>Intelligence and business software</h2><div className="capability-columns"><div><h3>AI-powered applications</h3><p>Use models for the work they do well while keeping important control in application code.</p><ul><li>Assistants and intelligent features</li><li>Retrieval and knowledge tools</li><li>Structured extraction and generation</li></ul></div><div><h3>Custom internal software</h3><p>Replace disconnected tools and handoffs with one clear interface for the people doing the work.</p><ul><li>Workflow and approval tools</li><li>Dashboards and internal portals</li><li>Integrations, testing, and handover</li></ul></div></div></article>
-    </div></section>
+    <section className="page-hero"><div className="container page-hero-grid"><div><p className="eyebrow">What we build</p><h1 className="display">The right tools.<br /><span className="muted">A better way forward.</span></h1></div><div className="page-hero-aside"><p className="subtitle">Start with what your business needs to do better. We’ll shape the experience and engineer the system that makes it possible.</p></div></div></section>
+    <section className="section"><div className="container"><p className="eyebrow">From first impression to everyday operation</p><div className="capability-offerings">{offerings.map(item => <article key={item.title}><item.icon size={33} strokeWidth={1.3} /><h2>{item.title}</h2><p>{item.text}</p><ul>{item.tags.map(tag => <li key={tag}>{tag}</li>)}</ul></article>)}</div></div></section>
+    <section className="section section-tone"><div className="container"><div className="editorial-heading"><div><p className="eyebrow">Ways to work together</p><h2>Start where you are.</h2></div><p className="section-aside">An early idea, a focused build,<br />or a product ready for its next chapter.</p></div><Engagements /></div></section>
+    <section className="section"><div className="container"><div className="editorial-heading"><div><p className="eyebrow">A little more clarity</p><h2>Good questions.</h2></div></div><Faqs /></div></section>
     <FinalCta />
   </>;
 }

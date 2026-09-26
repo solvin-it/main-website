@@ -1,7 +1,5 @@
 # Product
 
-<!-- impeccable:product-schema 1 -->
-
 ## Platform
 
 web
@@ -26,7 +24,7 @@ Solvin combines direct founder judgment with hands-on product design and enginee
 
 ## Operating Context
 
-Most Solvin projects are hosted as subdomains of `solvin.co`. The main site acts as the index and narrative layer connecting those live products, demonstrations, and future client projects.
+Most Solvin projects are hosted as subdomains of `solvin.co`. The main website is itself the showcase: visitors experience the craft and use the working Assistant directly, without a separate Work showcase.
 
 Prospects may arrive through founder referrals or business-development outreach. Many will be business owners with limited technical vocabulary and limited patience for long discovery questionnaires.
 
@@ -38,7 +36,7 @@ The guided assistant should ask a small number of adaptive, immediately answerab
 - AI-native applications, agents, assistants, and workflow systems.
 - Marketing and portfolio website design and development.
 - Mobile applications and React Native desktop applications where appropriate.
-- The site should support a portfolio of owned products and demonstrations now, with client work added later as it becomes publishable.
+- The website itself is the showcase. Put the working Assistant on the homepage and make it directly accessible from desktop and mobile navigation. Do not add a separate Work or case-study showcase.
 - Portfolio content must clearly distinguish owned products, demonstrations, experiments, and future client work. It must not invent clients, outcomes, testimonials, or performance claims.
 - The proposed prospect assistant should use Luna as its primary model to control operating cost, subject to technical validation during implementation.
 - The initial lead workflow may store conversations and structured requirements, or send a concise summary through Resend. A full CRM/dashboard is an open implementation decision and should be earned by actual usage.
@@ -59,7 +57,7 @@ Avoid AI hype, inflated claims, faux-corporate language, decorative robots, neon
 - A functioning contextual Assistant with deterministic topic planning, structured model extraction, response-quality validation, session recovery, consent-aware lead capture, and tests.
 - A scroll-controlled cinematic homepage demonstration that moves from reflected software to the recognizable Solvin mark.
 - The current Solvin website, brand guide, logo assets, content model, and working contact flow.
-- Owned products, demonstrations, and experiments can be presented as the initial portfolio.
+- The website and its working Assistant provide the immediate demonstration of Solvin’s capabilities.
 - Client projects are currently being built and are not yet available as public proof.
 - No testimonials, named client outcomes, or performance claims have been confirmed and none should be fabricated.
 

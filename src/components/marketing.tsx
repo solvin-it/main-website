@@ -56,7 +56,7 @@ export function FeaturedWork({ detailed = false }: { detailed?: boolean }) {
         <p>The Assistant combines focused questions, structured model extraction, deterministic workflow logic, session recovery, and consent-aware lead capture.</p>
         <div className="project-facts"><span>Product strategy</span><span>UX &amp; interface</span><span>Full-stack engineering</span><span>AI orchestration</span></div>
         {detailed && <p className="project-outcome"><strong>Current outcome</strong> A functioning internal product and qualification tool prepared for production configuration. No client-performance claims are made.</p>}
-        <Link className="text-link" href="/work">View the system <ArrowRight size={16} /></Link>
+        <Link className="text-link" href="/readiness#assistant-workspace">Try the Assistant <ArrowRight size={16} /></Link>
       </div>
       <AssistantInterface />
     </article>
