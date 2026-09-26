@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ArrowUp, Check, LoaderCircle, RotateCcw } from "lucide-react";
+import { ArrowRight, ArrowUp, Check, LoaderCircle, RotateCcw, Download } from "lucide-react";
+import { formatProjectBrief } from "@/lib/project-brief";
 import type { ChatTurn, LeadContact, ReadinessScore, Recommendation } from "@/lib/types";
 
 type Message = { role: "assistant" | "user"; text: string };
@@ -29,6 +30,7 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
   const [contact, setContact] = useState<Partial<LeadContact>>({});
   const endRef = useRef<HTMLDivElement>(null);
   const startedRef = useRef(false);
+  const composerRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (startedRef.current) return;
@@ -51,7 +53,7 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
   }, []);
   useEffect(() => {
     const messageList = endRef.current?.parentElement;
-    if (messageList?.scrollTo) messageList.scrollTo({ top: messageList.scrollHeight, behavior: "smooth" });
+    if (messageList?.scrollTo) messageList.scrollTo({ top: messageList.scrollHeight, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   }, [messages, contactMessages, result, contactStep]);
 
   async function start(reset = false, directPrompt?: string) {
@@ -75,6 +77,7 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
           setTurn(data);
           setMessages([{ role: "assistant", text: `Your conversation is still here. ${data.message}` }]);
           if (data.score && data.recommendation) setResult({ score: data.score, recommendation: data.recommendation });
+          if (data.stage === "completed") { setContactStep("complete"); localStorage.removeItem("solvin-session"); }
           return;
         }
         localStorage.removeItem("solvin-session");
@@ -94,6 +97,7 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
         const next = await firstReply.json();
         if (!firstReply.ok) throw new Error(next.error);
         setTurn(next);
+        if (next.score && next.recommendation) setResult({ score: next.score, recommendation: next.recommendation });
         setMessages([{ role: "user", text: promptToSend }, { role: "assistant", text: next.message }]);
         if (surface === "standalone") history.replaceState(null, "", `${location.pathname}#assistant-workspace`);
       } else {
@@ -144,7 +148,7 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
       setBriefDelivered(delivered);
       setContactSaved(true); setTurn(current => ({ ...current, stage: "completed", progress: 100 }));
       setContactStep("complete");
-      setContactMessages(current => [...current, { role: "assistant", text: delivered ? "Thank you. A copy of the brief has been emailed to you and sent to Solvin for review." : "Thank you. Your brief has been saved for Solvin to review. Email delivery is not configured in this environment." }]);
+      setContactMessages(current => [...current, { role: "assistant", text: delivered ? "Thank you. A copy of the brief has been emailed to you and sent to Solvin for review." : "Thank you. Your brief has been saved for Solvin to review. A copy could not be emailed. You can download the brief below." }]);
       localStorage.removeItem("solvin-session");
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Contact details could not be saved."); }
     finally { setBusy(false); }
@@ -152,7 +156,7 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
 
   function chooseContactPath(accepted: boolean) {
     if (!accepted) {
-      setContactMessages(current => [...current, { role: "user", text: "Not right now" }, { role: "assistant", text: "No problem. Your draft will remain here for you to review." }]);
+      setContactMessages(current => [...current, { role: "user", text: "Not right now" }, { role: "assistant", text: "No problem. You can download the draft and decide what to do next." }]);
       setContactStep("declined");
       return;
     }
@@ -212,6 +216,7 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
   const engaged = messages.length > 0 || busy || Boolean(result);
 
   function restart() {
+    if (busy) return;
     if (surface === "cinematic") {
       localStorage.removeItem("solvin-session");
       setSessionId(""); setMessages([]); setContactMessages([]); setTurn({}); setInput(""); setBusy(false); setError(""); setResult(null); setContactSaved(false); setBriefDelivered(false); setContactStep("offer"); setContact({});
@@ -223,10 +228,11 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
 
   return <div className={`assistant-experience assistant-${surface}${engaged ? " is-engaged" : " is-idle"}${result ? " has-brief" : ""}${contactSaved ? " is-complete" : ""}`}>
     <div className="assistant-identity">
-      <Image src="/solvin-mark-reverse.svg" alt="" width={92} height={92} priority={surface === "cinematic"} />
-      <div><span>The Assistant</span><strong>{engaged ? "Let’s work through it." : "What do you want solved?"}</strong></div>
-      {engaged && <button className="assistant-restart" onClick={restart} aria-label="Start a new conversation"><RotateCcw size={16} /></button>}
+      <Image src={surface === "cinematic" ? "/solvin-mark-reverse.svg" : "/solvin-mark.svg"} alt="" width={92} height={92} priority={surface === "cinematic"} />
+      <div><span>The Assistant</span><strong>{result ? "Your starting brief is ready." : engaged ? "Let’s work through it." : "What are you working on?"}</strong></div>
+      {engaged && <button className="assistant-restart" onClick={restart} disabled={busy} aria-label="Start a new conversation"><RotateCcw size={16} /></button>}
     </div>
+    {!engaged && <p className="assistant-welcome">An idea, a bottleneck, or a question about what’s possible. Start wherever you are.</p>}
     <div className="assistant-thread" aria-live="polite" aria-busy={busy}>
       {messages.map((message, index) => <div className={`assistant-message ${message.role}`} key={`${message.role}-${index}`}><p>{message.text}</p></div>)}
       {result && <BriefArtifact result={result} />}
@@ -242,17 +248,24 @@ export function ReadinessChat({ surface = "standalone", initialPrompt, onConvers
       {result && contactStep === "offer" && <div className="quick-replies"><button onClick={() => chooseContactPath(true)}>Yes, send the brief</button><button onClick={() => chooseContactPath(false)}>Not right now</button></div>}
       {result && contactStep === "declined" && <div className="deferred-follow-up"><span>Ready when you are.</span><button onClick={() => chooseContactPath(true)}>Send this brief</button></div>}
       {result && contactStep === "consent" ? <div className="consent-actions"><p>This permits project follow-up. It does not approve a contract or final scope.</p><button className="btn btn-primary" onClick={consentAndSend} disabled={busy}>{busy ? <LoaderCircle className="spin" size={17} /> : <>I agree — send brief <ArrowRight size={17} /></>}</button><button className="text-link" onClick={() => chooseContactPath(false)} disabled={busy}>Not right now</button></div> : !result || contactMode ?
-      <form className="composer assistant-composer" onSubmit={event => { event.preventDefault(); if (contactMode) void sendContactAnswer(); else void send(input); }}><label className="sr-only" htmlFor={`chat-input-${surface}`}>Your answer</label>{contactMode ? <input id={`chat-input-${surface}`} value={input} onChange={event => setInput(event.target.value)} placeholder={contactPlaceholder} type={inputType} autoComplete={contactStep === "name" ? "name" : contactStep === "email" ? "email" : "organization"} disabled={busy} /> : <textarea id={`chat-input-${surface}`} value={input} onChange={event => setInput(event.target.value)} placeholder={engaged ? "Type your answer…" : "Tell us the problem. We’ll help you solve it."} maxLength={1500} rows={engaged ? 2 : 3} disabled={busy} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void send(input); } }} />}<button aria-label={engaged ? "Send answer" : "Start the conversation"} disabled={busy || (contactStep !== "company" && !input.trim())}>{busy ? <LoaderCircle className="spin" size={18} /> : <ArrowUp size={18} />}</button></form> : null}
+      <form className="composer assistant-composer" onSubmit={event => { event.preventDefault(); if (contactMode) void sendContactAnswer(); else void send(input); }}><label className="sr-only" htmlFor={`chat-input-${surface}`}>Your answer</label>{contactMode ? <input id={`chat-input-${surface}`} value={input} onChange={event => setInput(event.target.value)} placeholder={contactPlaceholder} type={inputType} autoComplete={contactStep === "name" ? "name" : contactStep === "email" ? "email" : "organization"} disabled={busy} /> : <textarea ref={composerRef} id={`chat-input-${surface}`} value={input} onChange={event => setInput(event.target.value)} placeholder={engaged ? "Type your answer…" : "Describe your idea or what you’d like to improve…"} maxLength={1500} rows={engaged ? 2 : 3} disabled={busy} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(input); } }} />}<button aria-label={engaged ? "Send answer" : "Start the conversation"} disabled={busy || (contactStep !== "company" && !input.trim())}>{busy ? <LoaderCircle className="spin" size={18} /> : <ArrowUp size={18} />}</button></form> : null}
       {contactStep === "company" && <button className="contact-skip" onClick={skipCompany}>Skip this question</button>}
     </div>}
+    {!engaged && <div className="assistant-starters" aria-label="Ideas to start with"><span>Need a starting point?</span>{[
+      ["A better website", "I’d like a website that better explains my business and brings in the right inquiries."],
+      ["An app idea", "I have an idea for an app and want help deciding what the first version should do."],
+      ["Less manual work", "My team spends too much time on repetitive tasks. I’d like to find a better way."],
+    ].map(([label, prompt]) => <button key={label} onClick={() => { setInput(prompt); composerRef.current?.focus(); }}>{label} <ArrowRight size={13} /></button>)}</div>}
+    {!engaged && <p className="assistant-footnote">No contact details needed to begin. Share an overview, not private records.</p>}
     {contactSaved && <div className="assistant-completion"><Check size={18} /><div><strong>{briefDelivered ? "Your project brief has been sent." : "Your project brief is saved."}</strong><p>{briefDelivered ? "A copy is in your inbox, and Solvin has received the same brief." : "Solvin can follow up using the details you provided."}</p></div><a href={process.env.NEXT_PUBLIC_CALCOM_URL ?? "/contact"}>Book a discovery call <ArrowRight size={15} /></a></div>}
   </div>;
 }
 
 function BriefArtifact({ result }: { result: { score: ReadinessScore; recommendation: Recommendation } }) {
   return <article className="result-panel" aria-label="Generated project brief">
-    <div className="brief-intro"><p className="measure-label">Project brief · Draft for review</p><h3>{result.recommendation.workflowSummary}</h3><p>This starting brief was prepared from the details you shared. Review it and correct anything that does not reflect your situation.</p></div>
+    <div className="brief-intro"><p className="measure-label">Project brief · Draft for review</p><h3>{result.recommendation.workflowSummary}</h3><p>This starting brief was prepared from the details you shared. It is a starting point for discussion, not a final scope or quote.</p></div>
     <div className="result-grid"><div><span>What success looks like</span><p>{result.recommendation.opportunity}</p></div><div><span>Decisions to confirm</span><p>{result.recommendation.blocker}</p></div><div><span>Recommended first release</span><p>{result.recommendation.firstProject}</p></div><div><span>How Solvin can help</span><p>{result.recommendation.recommendedService}</p></div></div>
-    <div className="recommended-service"><Check size={18} /><span>Recommended next step: <strong>{result.recommendation.recommendedService}</strong></span></div>
+    <a className="brief-download" download="solvin-project-brief.txt" href={`data:text/plain;charset=utf-8,${encodeURIComponent(formatProjectBrief(result.recommendation))}`}><Download size={16} /> Download your brief</a>
+    <div className="recommended-service"><Check size={18} /><span>Recommended next step: <strong>{result.recommendation.nextAction}</strong></span></div>
   </article>;
 }

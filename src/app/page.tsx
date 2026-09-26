@@ -29,10 +29,15 @@ export default function Home() {
     <div className="discipline-strip"><div className="container"><span>Strategy meets craft.</span><p>Digital experiences <Asterisk size={18} /> Useful software <Asterisk size={18} /> Applied intelligence</p></div></div>
 
     <section className="section homepage-assistant" aria-labelledby="assistant-heading">
-      <div className="container">
-        <div className="editorial-heading"><div><p className="eyebrow">01 / Put Solvin to work</p><h2 id="assistant-heading">Your idea.<br /><span className="muted">Let’s work through it.</span></h2></div><p className="section-aside">This is a working conversation.<br />Bring a problem. Leave with a clearer starting point.</p></div>
-        <div className="assistant-workspace assistant-page" id="assistant-workspace"><ReadinessChat /></div>
-        <p className="assistant-bottom-note">A few thoughtful questions. A useful project brief.<br />Prefer a direct conversation? <Link href="/contact">Write to Jose.</Link></p>
+      <div className="container assistant-section-layout">
+        <div className="assistant-section-intro">
+          <p className="eyebrow">01 / The Solvin Assistant</p>
+          <h2 id="assistant-heading">Your idea.<br /><span className="muted">A clearer direction.</span></h2>
+          <p>Tell us what you’re working on. We’ll help you find a useful first step—and turn the conversation into a brief you can keep.</p>
+          <ol className="assistant-steps"><li><span>01</span> Start with your idea or problem</li><li><span>02</span> Work through a few focused questions</li><li><span>03</span> Take away a practical project brief</li></ol>
+          <Link className="text-link" href="/contact">Prefer to talk to Jose? <ArrowUpRight size={16} /></Link>
+        </div>
+        <div className="assistant-workspace assistant-native" id="assistant-workspace" tabIndex={-1}><ReadinessChat /></div>
       </div>
     </section>
 

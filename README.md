@@ -126,3 +126,17 @@ Run all checks before deployment:
 ```bash
 npm run lint && npm run typecheck && npm test && npm run build
 ```
+
+### Assistant experience
+
+The homepage Assistant shares the site's surface, typography, and layout rather
+than rendering as a separate dark panel. Optional starters fill the editable
+composer; they do not submit a message. Visitors can download the resulting plain
+text project brief without sharing contact details. Follow-up remains opt-in.
+
+Discovery replies use one short acknowledgment or insight and one question.
+Deterministic service answers cover basic capabilities, pricing process, timing,
+and who delivers the work; they do not invent quotes or deadlines and do not
+consume discovery turns. Sensitive input is omitted and does not advance the
+conversation. Explicit uncertainty skips a topic without fabricating facts.
+The server retains control of progression, scoring, validation, and consent.

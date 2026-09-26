@@ -79,7 +79,7 @@ describe("standalone Assistant", () => {
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(fetchMock).not.toHaveBeenCalled();
     expect(screen.queryByText("What problem would you like help solving?")).toBeNull();
-    expect(screen.getByPlaceholderText("Tell us the problem. We’ll help you solve it.")).toBeTruthy();
+    expect(screen.getByPlaceholderText("Describe your idea or what you’d like to improve…")).toBeTruthy();
   });
 });
 
@@ -101,5 +101,44 @@ describe("workflow example handoff", () => {
     } finally {
       history.replaceState(null, "", "/");
     }
+  });
+});
+
+describe("native Assistant experience", () => {
+  it("lets the visitor edit a starter before sending it", () => {
+    history.replaceState(null, "", "/");
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    render(<ReadinessChat />);
+    fireEvent.click(screen.getByRole("button", { name: "An app idea" }));
+    expect((screen.getByRole("textbox", { name: "Your answer" }) as HTMLTextAreaElement).value).toContain("first version");
+    expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Your answer" }));
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not send Enter while composing an international-language character", () => {
+    history.replaceState(null, "", "/");
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    render(<ReadinessChat />);
+    const composer = screen.getByRole("textbox", { name: "Your answer" });
+    fireEvent.change(composer, { target: { value: "A new idea" } });
+    fireEvent.keyDown(composer, { key: "Enter", isComposing: true });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("shows and exports a brief returned on the first response, without requiring contact details", async () => {
+    history.replaceState(null, "", "/");
+    const recommendation = { workflowSummary: "Repair intake", opportunity: "Track each request", blocker: "Confirm tools", firstProject: "Shared queue", recommendedService: "Business software", nextAction: "Review the intake process with Jose" };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce({ ok: true, json: async () => sessionTurn }).mockResolvedValueOnce({ ok: true, json: async () => ({ ...replyTurn, stage: "contact", score: {}, recommendation }) }));
+    render(<ReadinessChat />);
+    fireEvent.change(screen.getByRole("textbox", { name: "Your answer" }), { target: { value: "A detailed project request" } });
+    fireEvent.click(screen.getByRole("button", { name: "Start the conversation" }));
+    await waitFor(() => expect(screen.getByRole("article", { name: "Generated project brief" })).toBeTruthy());
+    const download = screen.getByRole("link", { name: "Download your brief" });
+    expect(decodeURIComponent(download.getAttribute("href")!)).toContain(recommendation.nextAction);
+    expect(download.getAttribute("download")).toBe("solvin-project-brief.txt");
+    expect(screen.getByText(recommendation.nextAction)).toBeTruthy();
+    expect(screen.queryByRole("textbox")).toBeNull();
   });
 });
