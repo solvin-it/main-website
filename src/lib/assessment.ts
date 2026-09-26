@@ -7,9 +7,9 @@ export const stageOrder: AssessmentStage[] = ["opening", "context", "audience", 
 
 export const questions: Record<AssessmentStage, { message: string; quickReplies?: string[] }> = {
   opening: { message: "What problem would you like help solving?" },
-  context: { message: "What does the business do, and where does this problem show up?" },
-  audience: { message: "Who most needs the result you are trying to create?" },
-  ideal_client: { message: "Who would be the ideal client for this consulting practice?" },
+  context: { message: "What does your business or team do?" },
+  audience: { message: "Who would use or benefit from the finished project?" },
+  ideal_client: { message: "Who would be your ideal customer or client?" },
   offer: { message: "What expertise or service would you most like clients to hire you for?" },
   pain_point: { message: "What is the most costly or frustrating part of the problem today?" },
   desired_outcome: { message: "What outcome would make solving this problem worthwhile?" },
@@ -17,10 +17,10 @@ export const questions: Record<AssessmentStage, { message: string; quickReplies?
   workflow_clarity: { message: "How is this handled today, from the first step to the final result?" },
   current_acquisition: { message: "How do prospective clients find or contact you today?" },
   core_task: { message: "What is the main task people need to complete with the application?" },
-  tools_data: { message: "What existing website, software, content, data, or brand materials should the project work with?" },
+  tools_data: { message: "What existing tools or materials would the project need to work with?" },
   credibility: { message: "What experience, results, or materials can establish trust without revealing confidential work?" },
-  source_information: { message: "What information should the AI use, and where does that information live today?" },
-  risk: { message: "What timing, approval, privacy, budget, or technical boundary matters most for the first release?", quickReplies: ["There is a target date", "Human approval is important", "Sensitive data is involved", "Budget is still open", "No known constraints", "Not sure yet"] },
+  source_information: { message: "Where would the AI find the information it needs?" },
+  risk: { message: "What is the main constraint we should plan around?", quickReplies: ["There is a target date", "Human approval is important", "Sensitive data is involved", "Budget is still open", "No known constraints", "Not sure yet"] },
   summary: { message: "I have enough context to prepare a starting project brief." },
   contact: { message: "Your project brief is ready." },
   completed: { message: "Your project brief has been sent." },
@@ -71,7 +71,7 @@ export function planDiscovery(facts: AssessmentFacts, answerCount: number): Disc
 }
 
 export function isUnknownAnswer(answer: string) {
-  return /^\s*(i (?:do not|don't) know|i(?:'m| am) not sure|not sure|unsure|no idea|skip|prefer not to say|none yet|nothing yet)\b/i.test(answer);
+  return /^\s*(i (?:do not|don't) know|i(?:'m| am) not sure|not sure|unsure|no idea|skip|prefer not to say|none yet|nothing yet)(?: yet| about that)?[.!?\s]*$/i.test(answer);
 }
 
 export function nextStage(stage: AssessmentStage): AssessmentStage {
@@ -98,11 +98,11 @@ export function extractFallback(stage: AssessmentStage, answer: string): Partial
     const projectType = /\bwebsite\b/.test(normalized) ? "website" : /\bweb app|web application|portal|platform\b/.test(normalized) ? "web_application" : /\bmobile|ios|android\b/.test(normalized) ? "mobile_application" : /\bdesktop\b/.test(normalized) ? "desktop_application" : /\bai|assistant|agent|chatbot\b/.test(normalized) ? "ai_system" : /\binternal|operation|workflow|business system\b/.test(normalized) ? "operational_system" : "unsure";
     return { projectType, projectGoal: answer.slice(0, 500) };
   }
-  if (stage === "context") return { businessType: answer.slice(0, 240), targetUsers: answer.slice(0, 300), teamFunction: answer.slice(0, 200), offer: answer.slice(0, 300) };
+  if (stage === "context") return { businessType: answer.slice(0, 240) };
   if (stage === "audience") return { targetUsers: answer.slice(0, 300) };
   if (stage === "ideal_client") return { idealClient: answer.slice(0, 300), targetUsers: answer.slice(0, 300) };
   if (stage === "offer") return { offer: answer.slice(0, 400) };
-  if (stage === "pain_point") return { painPoint: answer.slice(0, 500), desiredOutcome: answer.slice(0, 500), workflowName: answer.slice(0, 180), frequency: /\b(daily|every day)\b/.test(normalized) ? "daily" : /\b(weekly|every week)\b/.test(normalized) ? "weekly" : undefined };
+  if (stage === "pain_point") return { painPoint: answer.slice(0, 500), frequency: /\b(daily|every day)\b/.test(normalized) ? "daily" : /\b(weekly|every week)\b/.test(normalized) ? "weekly" : undefined };
   if (stage === "desired_outcome") return { desiredOutcome: answer.slice(0, 500) };
   if (stage === "success_metric") return { successMetric: answer.slice(0, 300), businessImpact: "medium" };
   if (stage === "current_acquisition") return { acquisitionChannels: answer.split(/,|\band\b/i).map(item => item.trim()).filter(Boolean).slice(0, 8), currentSituation: answer.slice(0, 500) };

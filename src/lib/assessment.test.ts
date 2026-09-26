@@ -58,8 +58,16 @@ describe("contextual discovery planning", () => {
 
   it("treats explicit uncertainty as an answer that can be skipped", () => {
     expect(isUnknownAnswer("I'm not sure yet")).toBe(true);
+    expect(isUnknownAnswer("I'm not sure, but the users are our repair technicians")).toBe(false);
     const plan = planDiscovery({ businessType: "Consulting", skippedTopics: ["audience"] }, 2);
     expect(plan.nextTopic).not.toBe("audience");
+  });
+
+  it("does not fabricate an audience or desired outcome in provider fallbacks", () => {
+    expect(extractFallback("context", "We run a repair shop")).toEqual({ businessType: "We run a repair shop" });
+    const pain = extractFallback("pain_point", "We miss requests every day");
+    expect(pain.desiredOutcome).toBeUndefined();
+    expect(pain.frequency).toBe("daily");
   });
 
   it.each([

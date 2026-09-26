@@ -106,7 +106,7 @@ describe("contextual assistant turns", () => {
     create.mockResolvedValue({ output_text: JSON.stringify({ message: "What is this for?" }) });
     const result = await createAssistantTurn("ideal_client", { businessType: "Fintech consulting" }, "I advise fintech firms.", "Understood.");
     expect(result.fallbackUsed).toBe(true);
-    expect(result.message).toContain("Who would be the ideal client");
+    expect(result.message).toContain("Who would be your ideal customer");
   });
 
   it("accepts model wording only when its topic matches the server plan", () => {
@@ -121,5 +121,27 @@ describe("contextual assistant turns", () => {
     );
     expect(result.fallbackUsed).toBe(false);
     expect(result.message).toContain("lead-generation effort");
+  });
+});
+
+describe("concise conversation style", () => {
+  it("allows a clear contextual use of this instead of forcing a stock fallback", () => {
+    expect(validateAssistantMessage("Who will use this customer portal?", "customer portal", true)).toBeNull();
+  });
+
+  it("uses one useful lead rather than repeating both acknowledgment and insight", () => {
+    const result = createAssistantTurn("audience", {}, "We are a repair shop.", "That makes clear what you do.", "The handoff is where requests get lost.", "audience", "Who needs to track the requests?");
+    expect(result.message).not.toContain("That makes clear");
+    expect(result.message).toContain("The handoff");
+  });
+
+  it("falls back to a plain question without automatic Understood filler", () => {
+    const result = createAssistantTurn("context", {}, "Help", "Understood.");
+    expect(result.message).toBe("What does your business or team do?");
+  });
+
+  it("drops a lengthy recap instead of making every answer read like a summary", () => {
+    const result = createAssistantTurn("risk", {}, "We need to track repair requests.", "The shop’s three technicians need a shared request queue with an owner and status for each and every request.", undefined, "risk", "What is the main constraint we should plan around?");
+    expect(result.message).toBe("What is the main constraint we should plan around?");
   });
 });
