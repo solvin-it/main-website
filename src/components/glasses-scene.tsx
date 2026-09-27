@@ -3,6 +3,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, type ReactNode, type MutableRefObject } from "react";
 import * as THREE from "three";
+import { createBowtieGeometry, createBowtieSupports, createFabricNormalMap } from "@/lib/bowtie-geometry";
 import { MARK_FLOOR, stepFallingBody, type FallingBody } from "@/lib/mark-physics";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
@@ -96,31 +97,22 @@ function GlassesModel() {
 }
 
 function BowtieModel() {
-  const wing = useMemo(() => {
-    const shape = new THREE.Shape();
-    shape.moveTo(0.15, 0.2);
-    shape.bezierCurveTo(0.4, 0.3, 0.88, 0.62, 1.04, 0.57);
-    shape.bezierCurveTo(1.13, 0.3, 1.13, -0.3, 1.04, -0.57);
-    shape.bezierCurveTo(0.88, -0.62, 0.4, -0.3, 0.15, -0.2);
-    shape.closePath();
-    return shape;
-  }, []);
+  const geometry = useMemo(() => createBowtieGeometry(), []);
+  const fabric = useMemo(() => createFabricNormalMap(), []);
+  useEffect(() => () => {
+    geometry.left.dispose(); geometry.right.dispose(); geometry.knot.dispose(); fabric.dispose();
+  }, [geometry, fabric]);
   return <group>
-    {[-1, 1].map(side => <group key={side} rotation={[0, side === -1 ? Math.PI : 0, 0]}>
-      <mesh castShadow receiveShadow position={[0, 0, -0.1]}>
-        <extrudeGeometry args={[wing, { depth: 0.2, bevelEnabled: true, bevelSegments: 5, steps: 1, bevelSize: 0.07, bevelThickness: 0.08, curveSegments: 24 }]} />
-        <meshPhysicalMaterial color="#161c24" roughness={0.48} metalness={0.12} sheen={1} sheenColor="#647080" sheenRoughness={0.55} />
-      </mesh>
-      {/* Raised folds catch the studio lights like gathered satin. */}
-      {[-1, 1].map(fold => <mesh key={fold} position={[0.48, fold * 0.15, side * 0.14]} rotation={[0, 0, fold * 0.25]} scale={[0.38, 0.036, 0.032]}>
-        <sphereGeometry args={[1, 24, 12]} />
-        <meshPhysicalMaterial color="#242b36" roughness={0.55} sheen={1} sheenColor="#788293" />
-      </mesh>)}
-    </group>)}
-    <mesh castShadow scale={[0.23, 0.31, 0.23]}>
-      <sphereGeometry args={[1, 32, 24]} />
-      <meshPhysicalMaterial color="#171e28" roughness={0.42} sheen={1} sheenColor="#727d90" sheenRoughness={0.5} />
-    </mesh>
+    {Object.entries(geometry).map(([name, surface]) => <mesh key={name} geometry={surface} castShadow>
+      <meshPhysicalMaterial
+        color={name === "knot" ? "#171619" : "#151417"}
+        metalness={0} roughness={0.59} specularIntensity={0.38}
+        sheen={0.8} sheenColor="#69616a" sheenRoughness={0.7}
+        normalMap={fabric} normalScale={new THREE.Vector2(0.22, 0.22)}
+        anisotropy={0.25} anisotropyRotation={name === "knot" ? Math.PI / 2 : 0}
+        envMapIntensity={0.75}
+      />
+    </mesh>)}
   </group>;
 }
 
@@ -134,7 +126,7 @@ for (const side of [-1, 1]) {
     for (const edge of [-0.065, 0.065]) glassSupports.push(new THREE.Vector3(side * x, y + edge, z + 1.35).multiplyScalar(0.82));
   }
 }
-const tieSupports = [-1.12, 1.12].flatMap(x => [-0.64, 0.64].flatMap(y => [-0.18, 0.18].map(z => new THREE.Vector3(x, y, z))));
+const tieSupports = createBowtieSupports();
 const glassHome = new THREE.Vector3(0, 0.65, 0);
 const tieHome = new THREE.Vector3(0, -1.35, 1.1);
 
