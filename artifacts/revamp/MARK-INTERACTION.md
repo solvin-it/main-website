@@ -13,3 +13,9 @@ The complete Solvin mark follows the mouse with a smooth turn and a small positi
 Validation: lint, TypeScript, 66 tests across 13 files, and production build. Component coverage includes mouse tracking, click versus drag, wheel bounds, keyboard equivalence, reset, and pinch release without an accidental fall.
 
 Current interaction screenshots: `pointer-mark-desktop.png`, `pointer-mark-mobile.png`, and `pointer-mark-zoom.png`. Earlier `mark-*` images document the previous controls.
+
+## Fabric bowtie refinement
+
+The bowtie now uses closed parametric cloth loops rather than extruded silhouettes: gathered folds, thin turned edges, a gently twisted rectangular knot, and slightly asymmetric wings. A small procedural weave normal map and non-metallic fabric sheen add surface detail without remote assets. The fold geometry supplies the self-shading; the bowtie casts a ground shadow but does not receive shadow-map artifacts on its thin folds. Ground-contact samples come from the same geometry functions. Interaction and stylized rigid-prop physics remain unchanged; this is not a deforming cloth simulation.
+
+Latest previews: `fabric-bowtie-desktop.png`, `fabric-bowtie-detail.png`, and `fabric-bowtie-mobile.png`.
