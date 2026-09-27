@@ -47,7 +47,7 @@ describe("glasses interaction", () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({ getExtension: () => null } as unknown as WebGL2RenderingContext);
     vi.stubGlobal("IntersectionObserver", class { observe() {} disconnect() {} });
     render(<HeroScene />);
-    return screen.getByRole("group", { name: "Interactive 3D glasses" });
+    return screen.getByRole("group", { name: "Interactive 3D glasses and bowtie" });
   }
 
   it("rotates beyond a full turn on both axes and preserves the angle when the pointer leaves", () => {
@@ -80,10 +80,68 @@ describe("glasses interaction", () => {
       fireEvent.pointerMove(control, { clientX: 400, clientY: 200 });
       fireEvent.pointerUp(control);
     }
+    expect(scene.motion!.current.dropped).toBe(false);
     expect(scene.motion!.current.x).toBeCloseTo(Math.PI * 4);
     expect(scene.motion!.current.y).toBeCloseTo(Math.PI * 2);
-    fireEvent.click(screen.getByRole("button", { name: "Reset glasses rotation" }));
+    fireEvent.click(screen.getByRole("button", { name: "Reset glasses and bowtie" }));
     expect(scene.motion!.current.x).toBe(0);
     expect(scene.motion!.current.y).toBe(0);
+  });
+
+  it("drops on a single click and freezes tracking until reset", () => {
+    vi.stubGlobal("PointerEvent", class extends MouseEvent { pointerId = 1; pointerType = "mouse"; });
+    const control = renderInteractiveScene();
+    control.setPointerCapture = vi.fn();
+    fireEvent.pointerDown(control, { clientX: 100, clientY: 100, button: 0 });
+    fireEvent.pointerUp(control);
+    expect(scene.motion!.current.dropped).toBe(true);
+    const rotation = { ...scene.motion!.current };
+    fireEvent.pointerMove(window, { clientX: 300, clientY: 300 });
+    fireEvent.keyDown(control, { key: "ArrowRight" });
+    expect(scene.motion!.current).toEqual(rotation);
+    fireEvent.keyDown(control, { key: "Home" });
+    expect(scene.motion!.current.dropped).toBe(false);
+    expect(scene.motion!.current.resetId).toBe(1);
+    expect(screen.queryByRole("button", { name: "Drop" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Logo view" })).toBeNull();
+  });
+
+  it("tracks hover without pressing and clamps wheel and keyboard zoom", () => {
+    vi.stubGlobal("PointerEvent", class extends MouseEvent { pointerId = 1; pointerType = "mouse"; });
+    const control = renderInteractiveScene();
+    vi.spyOn(control, "getBoundingClientRect").mockReturnValue({ left: 0, top: 0, width: 400, height: 400 } as DOMRect);
+    fireEvent.pointerMove(window, { clientX: 400, clientY: 0 });
+    expect(scene.motion!.current.pointerX).toBe(1);
+    expect(scene.motion!.current.pointerY).toBe(-1);
+    expect(scene.motion!.current.dropped).toBe(false);
+    fireEvent.wheel(control, { deltaY: -5000 });
+    expect(scene.motion!.current.zoom).toBe(1.65);
+    fireEvent.wheel(control, { deltaY: 5000, ctrlKey: true });
+    expect(scene.motion!.current.zoom).toBe(1.65);
+    fireEvent.keyDown(control, { key: "-" });
+    expect(scene.motion!.current.zoom).toBeCloseTo(1.55);
+    fireEvent.wheel(control, { deltaY: 5000 });
+    expect(scene.motion!.current.zoom).toBe(1);
+    fireEvent.keyDown(control, { key: "Enter" });
+    expect(scene.motion!.current.dropped).toBe(true);
+  });
+
+  it("pinches to zoom without dropping when either finger is lifted", () => {
+    vi.stubGlobal("PointerEvent", class extends MouseEvent {
+      pointerId: number;
+      pointerType = "touch";
+      constructor(type: string, init: PointerEventInit = {}) { super(type, init); this.pointerId = init.pointerId ?? 1; }
+    });
+    const control = renderInteractiveScene();
+    control.setPointerCapture = vi.fn();
+    fireEvent.pointerDown(control, { pointerId: 1, clientX: 100, clientY: 100, button: 0 });
+    fireEvent.pointerDown(control, { pointerId: 2, clientX: 200, clientY: 100, button: 0 });
+    fireEvent.pointerMove(control, { pointerId: 2, clientX: 250, clientY: 100 });
+    expect(scene.motion!.current.zoom).toBeCloseTo(1.5);
+    fireEvent.pointerUp(control, { pointerId: 2 });
+    fireEvent.pointerUp(control, { pointerId: 1 });
+    expect(scene.motion!.current.dropped).toBe(false);
+    fireEvent.click(screen.getByRole("button", { name: "Reset glasses and bowtie" }));
+    expect(scene.motion!.current.zoom).toBe(1);
   });
 });

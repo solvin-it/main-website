@@ -469,3 +469,29 @@ body { -webkit-font-smoothing: antialiased; }
   .assistant-native .assistant-experience.is-engaged .assistant-thread { max-height: min(370px, 45svh); }
   .homepage-assistant .assistant-workspace { scroll-margin-top: 1rem; }
 }
+
+/* A small studio for the complete Solvin mark. Keep controls outside the drag surface. */
+.hero-object { height: 610px; }
+.hero-canvas { inset: 0 -6% 110px; }
+.object-orbit { width: 76%; left: 12%; top: 3%; }
+.object-caption-top { top: 0; right: 10%; }
+.object-controls { bottom: 0; left: 8%; right: 8%; flex-direction: column; justify-content: center; gap: .65rem; }
+.object-note { margin: 0; min-height: 1.3em; text-align: center; }
+.object-controls button:disabled { opacity: .4; cursor: default; }
+.object-view-buttons { justify-content: center; }
+.object-assistant-link { display: inline-flex; align-items: center; gap: .55rem; color: var(--muted); font-size: .72rem; }
+.object-assistant-link:hover { color: var(--brand); }
+@media (max-width: 1100px) { .hero-object { height: 540px; } }
+@media (max-width: 620px) {
+  .hero-object { height: 440px; margin-top: 1.5rem; }
+  .hero-canvas { inset: 10px -6% 114px; }
+  .object-caption-top { right: 4%; }
+  .object-controls { left: 0; right: 0; }
+  .object-orbit { top: 4%; }
+}
+
+.object-zoom-value { align-self: center; min-width: 3.1rem; text-align: center; color: var(--muted); font-size: .7rem; font-variant-numeric: tabular-nums; }
+.object-gesture-hint { color: var(--muted); font-size: .65rem; }
+.object-controls { gap: .4rem; }
+.object-view-buttons button { min-width: 44px; justify-content: center; }
+@media (pointer: coarse) { .object-note { font-size: .65rem; } }
