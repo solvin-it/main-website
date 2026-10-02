@@ -1,0 +1,155 @@
+.assistant-presence {
+  --presence-size: 44px;
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  width: var(--presence-size);
+  height: var(--presence-size);
+  margin: 0;
+  isolation: isolate;
+  pointer-events: none;
+}
+
+.assistant-presence--hero {
+  --presence-size: 108px;
+}
+
+.assistant-presence i {
+  position: absolute;
+  display: block;
+  font-style: normal;
+  pointer-events: none;
+}
+
+.assistant-presence-aura {
+  z-index: -2;
+  inset: -24%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #a5b5ff33, #b7e2cd13 45%, transparent 70%);
+  opacity: .7;
+  animation: assistant-presence-breathe 5s ease-in-out infinite;
+}
+
+.assistant-presence-glass {
+  z-index: 1;
+  inset: 9%;
+  overflow: hidden;
+  border: 1px solid #e9f3ff88;
+  border-radius: 43% 48% 46% 48%;
+  background:
+    radial-gradient(ellipse at 30% 14%, #f1f4ffdd, transparent 45%),
+    radial-gradient(ellipse at 80% 78%, #c9eddbb3, transparent 58%),
+    linear-gradient(145deg, #a5b6fa, #b9c8ed 44%, #a5cbbd);
+  box-shadow:
+    inset 2px 3px 7px #ffffff5c,
+    inset -3px -4px 8px #536b9b40,
+    0 5px 12px #060d1940;
+  transform: rotate(-8deg);
+  transition: border-color .5s, box-shadow .5s;
+}
+
+.assistant-presence-reflection {
+  inset: 6% 12% 54%;
+  border-top: 1px solid #ffffffb8;
+  border-radius: 50%;
+  background: linear-gradient(170deg, #ffffff35, transparent 70%);
+  transform: rotate(-20deg);
+}
+
+.assistant-presence-mark {
+  position: absolute;
+  top: 18%;
+  left: 17%;
+  width: 66%;
+  height: 66%;
+  color: #273638;
+  filter: drop-shadow(0 1px 0 #ffffff45);
+  transform: rotate(8deg);
+}
+
+.assistant-presence-orbit {
+  inset: 2% -7%;
+  border: 1px solid #c7d5fa70;
+  border-radius: 50%;
+  transform: rotate(-35deg) scaleY(.56);
+}
+
+.assistant-presence-orbit--back {
+  z-index: -1;
+  border-color: #cad8ff50;
+  transform: rotate(35deg) scaleY(.66);
+}
+
+.assistant-presence-orbit--front {
+  z-index: 2;
+  border-right-color: #e9f6dfb3;
+  border-bottom-color: #d7e8ffb3;
+  border-top-color: transparent;
+  border-left-color: transparent;
+}
+
+.assistant-presence[data-state="working"] .assistant-presence-aura {
+  animation-duration: 2.6s;
+}
+
+.assistant-presence[data-state="working"] .assistant-presence-orbit--back {
+  animation: assistant-presence-orbit-back 5s linear infinite;
+}
+
+.assistant-presence[data-state="working"] .assistant-presence-orbit--front {
+  animation: assistant-presence-orbit-front 4s linear infinite;
+}
+
+.assistant-presence[data-state="ready"] .assistant-presence-aura {
+  background: radial-gradient(circle, #c5e9d148, #b7e2cd17 45%, transparent 70%);
+  opacity: .9;
+  animation: none;
+}
+
+.assistant-presence[data-state="ready"] .assistant-presence-glass {
+  border-color: #dff5decc;
+  box-shadow: inset 2px 3px 7px #ffffff5c, inset -3px -4px 8px #536b9b40, 0 0 20px #b5dfc321;
+}
+
+.assistant-presence[data-state="error"] .assistant-presence-aura {
+  opacity: .35;
+  animation: none;
+}
+
+.assistant-presence[data-state="error"] .assistant-presence-glass {
+  border-color: #e1c8bca6;
+}
+
+.assistant-presence:not([data-motion="running"]) .assistant-presence-aura,
+.assistant-presence:not([data-motion="running"]) .assistant-presence-orbit {
+  animation-play-state: paused;
+}
+
+.assistant-presence[data-motion="running"] .assistant-presence-aura,
+.assistant-presence[data-motion="running"] .assistant-presence-orbit {
+  animation-play-state: running;
+}
+
+@keyframes assistant-presence-breathe {
+  0%, 100% { opacity: .5; transform: scale(.92); }
+  50% { opacity: .95; transform: scale(1.08); }
+}
+
+@keyframes assistant-presence-orbit-front {
+  from { transform: rotate(-35deg) scaleY(.56); }
+  to { transform: rotate(325deg) scaleY(.56); }
+}
+
+@keyframes assistant-presence-orbit-back {
+  from { transform: rotate(35deg) scaleY(.66); }
+  to { transform: rotate(-325deg) scaleY(.66); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-presence *,
+  .assistant-presence *::before,
+  .assistant-presence *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

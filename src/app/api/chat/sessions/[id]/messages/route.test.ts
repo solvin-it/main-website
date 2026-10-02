@@ -30,6 +30,7 @@ describe("Assistant conversation boundaries", () => {
     expect(session.answerCount).toBe(5);
     expect(mocks.analyzeAnswer).not.toHaveBeenCalled();
     expect(mocks.createRecommendation).not.toHaveBeenCalled();
+    expect(reply.projectPreview).toEqual({ answerCount: 5, goal: "A customer portal", currentFocus: "context" });
   });
 
   it("omits sensitive input without advancing or preparing a premature brief", async () => {
@@ -40,13 +41,36 @@ describe("Assistant conversation boundaries", () => {
     expect(mocks.saveTurn.mock.calls[0][1]).not.toContain("secret123");
     expect(mocks.analyzeAnswer).not.toHaveBeenCalled();
     expect(mocks.createRecommendation).not.toHaveBeenCalled();
+    expect(reply.projectPreview).toEqual({ answerCount: 5, goal: "A customer portal", currentFocus: "context" });
   });
 
   it("records uncertainty as a skipped topic rather than inventing project facts", async () => {
     session.answerCount = 1;
-    await send("Not sure yet");
+    const reply = await send("Not sure yet");
     expect(session.facts.skippedTopics).toContain("context");
     expect(session.facts.businessType).toBeUndefined();
     expect(mocks.analyzeAnswer).not.toHaveBeenCalled();
+    expect(reply.projectPreview.answerCount).toBe(2);
+    expect(JSON.stringify(reply.projectPreview)).not.toContain("Not sure");
+  });
+
+  it("updates the preview with confirmed facts on each discovery reply", async () => {
+    session.answerCount = 1;
+    session.facts.projectType = "web_application";
+    mocks.analyzeAnswer.mockResolvedValue({ acknowledgment: "Understood.", facts: { businessType: "A design studio", targetUsers: "Our customers", tools: ["CRM"] } });
+    const reply = await send("We are a design studio and our customers use the CRM.");
+    expect(reply.projectPreview).toMatchObject({ answerCount: 2, projectType: "web_application", service: "Web application", goal: "A customer portal", audience: "Our customers", tools: ["CRM"] });
+    expect(reply.projectPreview.currentFocus).toBe(reply.stage);
+    expect(reply.recommendation).toBeUndefined();
+  });
+
+  it("includes the final confirmed preview alongside the prepared recommendation", async () => {
+    mocks.analyzeAnswer.mockResolvedValue({ acknowledgment: "Understood.", facts: { projectType: "website", businessType: "A design studio", successMetric: "Five qualified enquiries a month" } });
+    const recommendation = { recommendedService: "Website development", opportunity: "Show the studio's expertise" };
+    mocks.createRecommendation.mockResolvedValue(recommendation);
+    const reply = await send("We are a design studio.");
+    expect(reply.stage).toBe("contact");
+    expect(reply.recommendation).toEqual(recommendation);
+    expect(reply.projectPreview).toEqual({ answerCount: 6, projectType: "website", service: "Website development", goal: "A customer portal", successMetric: "Five qualified enquiries a month" });
   });
 });

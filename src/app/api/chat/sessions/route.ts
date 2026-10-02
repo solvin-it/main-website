@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createSession } from "@/lib/store";
 import { progressFor, questions } from "@/lib/assessment";
 import { rateLimit } from "@/lib/server";
+import { createProjectPreview } from "@/lib/project-preview";
 
 const schema = z.object({
   entryPage: z.string().max(300).optional(),
@@ -16,7 +17,10 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   try {
     const session = await createSession(parsed.data);
-    return NextResponse.json({ sessionId: session.id, stage: session.stage, progress: progressFor(session.stage), ...questions.opening });
+    return NextResponse.json({
+      sessionId: session.id, stage: session.stage, progress: progressFor(session.stage), ...questions.opening,
+      projectPreview: createProjectPreview(session.facts, session.answerCount, session.stage),
+    });
   } catch {
     return NextResponse.json({ error: "Unable to start the assessment." }, { status: 500 });
   }

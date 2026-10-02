@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const links = [
+  ["Experience", "/#experience"],
   ["Capabilities", "/capabilities"],
-  ["Approach", "/#method"],
   ["About", "/about"],
 ] as const;
 
@@ -64,7 +64,7 @@ export function Header() {
         <Logo />
         <nav className="desktop-nav" aria-label="Primary">
           {links.map(([label, href]) => <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>{label}</Link>)}
-          <Link className="btn btn-primary nav-cta" href={assistantHref}>The Assistant <ArrowUpRight size={15} /></Link>
+          <Link className="btn btn-primary nav-cta" href={assistantHref}>Try the Assistant <ArrowUpRight size={15} /></Link>
           <ThemeToggle />
         </nav>
         <div className="mobile-actions">
@@ -91,11 +91,11 @@ export function Footer() {
   return (
     <footer className="site-footer">
       <div className="container footer-intro">
-        <p className="footer-statement">Something on your mind?<br /><span>Let’s make it work.</span></p>
-        <Link className="footer-project-link" href="/readiness#assistant-workspace">Start a conversation <ArrowUpRight size={23} /></Link>
+        <p className="footer-statement">Your next chapter.<br /><span>Beautifully built.</span></p>
+        <Link className="footer-project-link" href="/readiness#assistant-workspace">Let’s make something great <ArrowUpRight size={23} /></Link>
       </div>
       <div className="container footer-grid">
-        <div className="footer-brand"><Logo /><p>Independent thinking. Thoughtful engineering.<br />From Manila, for a world of possibilities.</p></div>
+        <div className="footer-brand"><Logo /><p>Website development. Agent development.<br />Independent by design. Built with care.</p></div>
         <div><p className="eyebrow">Explore</p>{links.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}</div>
         <div><p className="measure-label">Tools &amp; contact</p><Link href="/readiness#assistant-workspace">The Assistant</Link><Link href="/contact">Direct contact</Link><Link href="/privacy">Privacy</Link></div>
       </div>

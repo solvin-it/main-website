@@ -6,6 +6,7 @@ import { getSession, saveTurn } from "@/lib/store";
 import { rateLimit } from "@/lib/server";
 import type { DiscoveryTopic } from "@/lib/types";
 import { answerServiceQuestion } from "@/lib/assistant-service-questions";
+import { createProjectPreview } from "@/lib/project-preview";
 
 const schema = z.object({ message: z.string().trim().min(1).max(1500) });
 
@@ -25,7 +26,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (sensitive) session.facts = { ...session.facts, sensitiveData: true };
     const message = `${sensitive ? "Please leave out passwords and private records. A high-level description is enough." : serviceAnswer} ${questions[session.stage].message}`;
     await saveTurn(session, safeMessage, message, { selected_topic: session.stage, response_type: sensitive ? "sensitive_content" : "service_question" });
-    return NextResponse.json({ sessionId: id, message, stage: session.stage, progress: progressFor(session.stage), quickReplies: questions[session.stage].quickReplies });
+    return NextResponse.json({
+      sessionId: id, message, stage: session.stage, progress: progressFor(session.stage), quickReplies: questions[session.stage].quickReplies,
+      projectPreview: createProjectPreview(session.facts, session.answerCount, session.stage),
+    });
   }
   const unknown = isUnknownAnswer(safeMessage);
   const analysis = unknown
@@ -64,5 +68,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   return NextResponse.json({
     sessionId: id, message: assistantMessage, stage: session.stage, progress: progressFor(session.stage),
     quickReplies: question.quickReplies, score, recommendation,
+    projectPreview: createProjectPreview(session.facts, session.answerCount, session.stage),
   });
 }

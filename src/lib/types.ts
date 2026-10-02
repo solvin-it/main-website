@@ -67,6 +67,19 @@ export interface LeadContact {
   consentToContact: boolean;
 }
 
+export interface ProjectPreview {
+  projectType?: AssessmentFacts["projectType"];
+  service?: string;
+  goal?: string;
+  audience?: string;
+  desiredOutcome?: string;
+  successMetric?: string;
+  constraints?: string;
+  tools?: string[];
+  answerCount: number;
+  currentFocus?: DiscoveryTopic;
+}
+
 export interface ChatTurn {
   sessionId: string;
   message: string;
@@ -76,4 +89,5 @@ export interface ChatTurn {
   completed?: boolean;
   score?: ReadinessScore;
   recommendation?: Recommendation;
+  projectPreview?: ProjectPreview;
 }

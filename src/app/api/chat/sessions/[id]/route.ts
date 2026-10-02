@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { progressFor, questions } from "@/lib/assessment";
 import { getSession } from "@/lib/store";
+import { createProjectPreview } from "@/lib/project-preview";
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -13,5 +14,6 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     ...questions[session.stage],
     score: session.score,
     recommendation: session.recommendation,
+    projectPreview: createProjectPreview(session.facts, session.answerCount, session.stage),
   });
 }

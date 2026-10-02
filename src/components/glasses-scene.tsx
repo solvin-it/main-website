@@ -3,16 +3,14 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, type ReactNode, type MutableRefObject } from "react";
 import * as THREE from "three";
-import { createBowtieGeometry, createBowtieSupports, createFabricNormalMap } from "@/lib/bowtie-geometry";
-import { MARK_FLOOR, stepFallingBody, type FallingBody } from "@/lib/mark-physics";
+import { createBowtieGeometry, createFabricNormalMap } from "@/lib/bowtie-geometry";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
-export type SceneMotion = { x: number; y: number; active: boolean; dropped: boolean; resetId: number; zoom: number; pointerX: number; pointerY: number };
+export type SceneMotion = { x: number; active: boolean; pointerX: number; pointerY: number };
 type SceneProps = {
   motion: MutableRefObject<SceneMotion>;
   onReady: () => void;
   onFailure: () => void;
-  onLanded: () => void;
 };
 
 function StudioEnvironment({ onReady, onFailure }: Pick<SceneProps, "onReady" | "onFailure">) {
@@ -24,7 +22,7 @@ function StudioEnvironment({ onReady, onFailure }: Pick<SceneProps, "onReady" | 
     // Three.js owns this mutable scene; environment setup is an imperative renderer operation.
     /* eslint-disable react-hooks/immutability */
     scene.environment = environment.texture;
-    scene.environmentIntensity = 1.2;
+    scene.environmentIntensity = 1.5;
     const canvas = gl.domElement;
     const lost = (event: Event) => { event.preventDefault(); onFailure(); };
     canvas.addEventListener("webglcontextlost", lost);
@@ -46,7 +44,7 @@ function Curve({ points, radius = 0.04, chrome = false }: { points: number[][]; 
   const curve = useMemo(() => new THREE.CatmullRomCurve3(points.map(point => new THREE.Vector3(...point))), [points]);
   return <mesh castShadow receiveShadow>
     <tubeGeometry args={[curve, 48, radius, 10, false]} />
-    <meshPhysicalMaterial color={chrome ? "#b9c2cf" : "#151a22"} metalness={chrome ? 0.95 : 0.65} roughness={chrome ? 0.19 : 0.22} clearcoat={1} />
+    <meshPhysicalMaterial color={chrome ? "#e0e5de" : "#374641"} metalness={chrome ? 0.95 : 0.78} roughness={chrome ? 0.19 : 0.2} clearcoat={1} />
   </mesh>;
 }
 
@@ -64,15 +62,15 @@ function GlassesModel() {
     {[-1, 1].map(side => <group key={side} position={[side * 1.18, 0, 0]}>
       <mesh castShadow receiveShadow>
         <extrudeGeometry args={[ring, { depth: 0.11, bevelEnabled: true, bevelSegments: 4, steps: 1, bevelSize: 0.025, bevelThickness: 0.025, curveSegments: 64 }]} />
-        <meshPhysicalMaterial color="#151a22" metalness={0.64} roughness={0.21} clearcoat={1} clearcoatRoughness={0.12} />
+        <meshPhysicalMaterial color="#374641" metalness={0.78} roughness={0.21} clearcoat={1} clearcoatRoughness={0.12} />
       </mesh>
       <mesh position={[0, 0, 0.052]} scale={[1.08, 1, 0.065]}>
         <sphereGeometry args={[0.87, 64, 32]} />
-        <meshPhysicalMaterial color="#d5e9ef" transparent opacity={0.3} metalness={0.06} roughness={0.08} transmission={0.7} thickness={0.12} ior={1.46} envMapIntensity={0.65} clearcoat={1} depthWrite={false} />
+        <meshPhysicalMaterial color="#bfd9c8" transparent opacity={0.35} metalness={0.06} roughness={0.08} transmission={0.7} thickness={0.12} ior={1.46} envMapIntensity={0.65} clearcoat={1} depthWrite={false} />
       </mesh>
       <mesh position={[0, 0, 0.14]} scale={[1.081, 1, 1]}>
         <torusGeometry args={[0.917, 0.009, 8, 96]} />
-        <meshStandardMaterial color="#b4bdca" metalness={1} roughness={0.23} />
+        <meshStandardMaterial color="#d9e4d7" metalness={1} roughness={0.23} />
       </mesh>
       <mesh castShadow position={[side * 1.025, 0.22, -0.012]}>
         <boxGeometry args={[0.2, 0.115, 0.14]} />
@@ -105,39 +103,22 @@ function BowtieModel() {
   return <group>
     {Object.entries(geometry).map(([name, surface]) => <mesh key={name} geometry={surface} castShadow>
       <meshPhysicalMaterial
-        color={name === "knot" ? "#171619" : "#151417"}
-        metalness={0} roughness={0.59} specularIntensity={0.38}
-        sheen={0.8} sheenColor="#69616a" sheenRoughness={0.7}
+        color={name === "knot" ? "#7f8e73" : "#aebd9c"}
+        metalness={0} roughness={0.76} specularIntensity={0.18}
+        sheen={0.3} sheenColor="#bec9ae" sheenRoughness={0.9}
         normalMap={fabric} normalScale={new THREE.Vector2(0.22, 0.22)}
         anisotropy={0.25} anisotropyRotation={name === "knot" ? Math.PI / 2 : 0}
-        envMapIntensity={0.75}
+        envMapIntensity={0.45}
       />
     </mesh>)}
   </group>;
 }
 
-const glassSupports: THREE.Vector3[] = [];
-for (const side of [-1, 1]) {
-  for (let index = 0; index < 48; index++) {
-    const angle = index / 48 * Math.PI * 2;
-    for (const z of [1.32, 1.51]) glassSupports.push(new THREE.Vector3(side * 1.18 + Math.cos(angle) * 1.09, Math.sin(angle) * 1.01, z).multiplyScalar(0.82));
-  }
-  for (const [x, y, z] of [[2.28, 0.2, -0.3], [2.21, 0.15, -1.3], [2.04, 0.11, -2.25], [1.8, -0.35, -2.88]]) {
-    for (const edge of [-0.065, 0.065]) glassSupports.push(new THREE.Vector3(side * x, y + edge, z + 1.35).multiplyScalar(0.82));
-  }
-}
-const tieSupports = createBowtieSupports();
-const glassHome = new THREE.Vector3(0, 0.65, 0);
-const tieHome = new THREE.Vector3(0, -1.35, 1.1);
-
-function FloatingProp({ motion, home, supports, kind, onLanded, children }: Pick<SceneProps, "motion" | "onLanded"> & {
-  home: THREE.Vector3; supports: THREE.Vector3[]; kind: "glasses" | "tie"; children: ReactNode;
-}) {
+function FloatingIdentity({ motion, children }: Pick<SceneProps, "motion"> & { children: ReactNode }) {
   const group = useRef<THREE.Group>(null);
-  const body = useRef<FallingBody | null>(null);
-  const resetId = useRef(motion.current.resetId);
   const invalidate = useThree(state => state.invalidate);
-  const targetRef = useRef({ rotation: new THREE.Euler(), position: new THREE.Vector3() });
+  const target = useRef({ rotation: new THREE.Euler(), position: new THREE.Vector3() });
+  const idleTime = useRef(0);
   useEffect(() => {
     const render = () => { if (motion.current.active) invalidate(); };
     window.addEventListener("solvin-scene-change", render);
@@ -145,103 +126,47 @@ function FloatingProp({ motion, home, supports, kind, onLanded, children }: Pick
   }, [invalidate, motion]);
 
   useFrame((_, delta) => {
-    const target = targetRef.current;
     const object = group.current;
     const current = motion.current;
     if (!object || !current.active) return;
-    if (resetId.current !== current.resetId) {
-      body.current = null; resetId.current = current.resetId;
-      object.rotation.set(...[object.rotation.x, object.rotation.y, object.rotation.z].map(angle => Math.atan2(Math.sin(angle), Math.cos(angle))) as [number, number, number]);
-    }
-    if (current.dropped) {
-      if (!body.current) body.current = {
-        position: object.position.clone(), rotation: object.rotation.clone(),
-        velocity: new THREE.Vector3(kind === "glasses" ? -0.35 : 0.8, 0.5, 0),
-        angularVelocity: new THREE.Vector3(kind === "glasses" ? 1.4 : 2.4, 0.4, kind === "glasses" ? 0.65 : -1.5),
-        asleep: false, contacts: 0,
-        restPosition: kind === "glasses" ? { x: -0.35, z: -0.75 } : { x: 1, z: 1.3 },
-        restRotation: {
-          x: Math.PI / 2 + Math.round((object.rotation.x - Math.PI / 2) / (Math.PI * 2)) * Math.PI * 2,
-          y: Math.round(object.rotation.y / (Math.PI * 2)) * Math.PI * 2,
-          z: kind === "glasses" ? 0.12 : -0.15,
-        },
-      };
-      const wasAsleep = body.current.asleep;
-      stepFallingBody(body.current, supports, delta);
-      object.position.copy(body.current.position);
-      object.rotation.copy(body.current.rotation);
-      if (!body.current.asleep) invalidate();
-      else if (!wasAsleep) onLanded();
-      return;
-    }
-    target.rotation.set(0.16 + current.y + current.pointerY * 0.22, -0.38 + current.x + current.pointerX * 0.5, -0.08);
-    target.position.copy(home).applyEuler(target.rotation);
-    target.position.x += current.pointerX * 0.35;
-    target.position.y -= current.pointerY * 0.18;
     const dt = Math.min(delta, 0.05);
-    object.rotation.x = THREE.MathUtils.damp(object.rotation.x, target.rotation.x, 7, dt);
-    object.rotation.y = THREE.MathUtils.damp(object.rotation.y, target.rotation.y, 7, dt);
-    object.rotation.z = THREE.MathUtils.damp(object.rotation.z, target.rotation.z, 7, dt);
-    object.position.lerp(target.position, 1 - Math.exp(-7 * dt));
-    if (object.position.distanceTo(target.position) + Math.abs(object.rotation.x - target.rotation.x) + Math.abs(object.rotation.y - target.rotation.y) + Math.abs(object.rotation.z - target.rotation.z) > 0.001) invalidate();
-  });
-  return <group ref={group} position={home}>{children}</group>;
-}
-
-function SceneZoom({ motion }: Pick<SceneProps, "motion">) {
-  const focusY = useRef(-0.75);
-  useFrame(({ camera, invalidate }, delta) => {
-    if (!motion.current.active) return;
-    const difference = motion.current.zoom - camera.zoom;
-    const targetY = -0.75 + (motion.current.zoom - 1) / 0.65 * (motion.current.dropped ? -0.45 : 0.55);
-    if (Math.abs(difference) + Math.abs(focusY.current - targetY) < 0.001) return;
-    focusY.current = THREE.MathUtils.damp(focusY.current, targetY, 9, Math.min(delta, 0.05));
-    camera.lookAt(0, focusY.current, 0);
-    camera.zoom = THREE.MathUtils.damp(camera.zoom, motion.current.zoom, 9, Math.min(delta, 0.05));
-    camera.updateProjectionMatrix();
+    // Advance only while visible, so returning to the scene never jumps its pose.
+    idleTime.current += dt;
+    const time = idleTime.current;
+    target.current.rotation.set(
+      0.12 + current.pointerY * 0.09 + Math.sin(time * 0.36) * 0.025,
+      -0.32 + current.x + current.pointerX * 0.18 + Math.sin(time * 0.28) * 0.04,
+      -0.08 + Math.sin(time * 0.3) * 0.018,
+    );
+    target.current.position.set(current.pointerX * 0.08, -current.pointerY * 0.06 + Math.sin(time * 0.65) * 0.07, 0);
+    object.rotation.x = THREE.MathUtils.damp(object.rotation.x, target.current.rotation.x, 6, dt);
+    object.rotation.y = THREE.MathUtils.damp(object.rotation.y, target.current.rotation.y, 6, dt);
+    object.rotation.z = THREE.MathUtils.damp(object.rotation.z, target.current.rotation.z, 6, dt);
+    object.position.lerp(target.current.position, 1 - Math.exp(-6 * dt));
     invalidate();
   });
-  return null;
+  return <group ref={group} rotation={[0.12, -0.32, -0.08]}>{children}</group>;
 }
 
-function StudioFloor() {
-  const material = useRef<THREE.MeshStandardMaterial>(null);
-  const invalidate = useThree(state => state.invalidate);
-  useEffect(() => {
-    const update = () => {
-      material.current?.color.set(document.documentElement.dataset.theme === "dark" ? "#354540" : "#dce2dd");
-      invalidate();
-    };
-    update();
-    const observer = new MutationObserver(update);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => observer.disconnect();
-  }, [invalidate]);
-  return <mesh position={[0, MARK_FLOOR - 0.07, 0]} receiveShadow>
-    <cylinderGeometry args={[3.1, 3.1, 0.14, 96]} />
-    <meshStandardMaterial ref={material} color="#dce2dd" roughness={0.86} metalness={0.05} />
-  </mesh>;
-}
-
-export default function GlassesScene({ motion, onReady, onFailure, onLanded }: SceneProps) {
+export default function GlassesScene({ motion, onReady, onFailure }: SceneProps) {
   return <Canvas
     frameloop="demand"
     dpr={[1, 1.5]}
-    shadows={{ type: THREE.PCFShadowMap }}
-    camera={{ position: [0, 1.1, 10.5], fov: 35 }}
+    camera={{ position: [0, 0.6, 9.5], fov: 35 }}
     gl={{ alpha: true, antialias: true, powerPreference: "low-power" }}
     fallback={null}
-    onCreated={({ gl, camera }) => { camera.lookAt(0, -0.75, 0); gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 1.05; }}
+    onCreated={({ gl, camera }) => { camera.lookAt(0, -0.2, 0); gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 1.1; }}
     style={{ pointerEvents: "none" }}
     aria-hidden="true"
   >
     <StudioEnvironment onReady={onReady} onFailure={onFailure} />
-    <ambientLight intensity={0.65} />
-    <directionalLight position={[-3, 6, 5]} intensity={3.5} castShadow shadow-mapSize={[1024, 1024]} shadow-normalBias={0.025} shadow-radius={5} shadow-camera-left={-6} shadow-camera-right={6} shadow-camera-top={6} shadow-camera-bottom={-6} />
-    <directionalLight position={[4, 2, -3]} color="#a8c5ff" intensity={3} />
-    <FloatingProp motion={motion} home={glassHome} supports={glassSupports} kind="glasses" onLanded={onLanded}><GlassesModel /></FloatingProp>
-    <FloatingProp motion={motion} home={tieHome} supports={tieSupports} kind="tie" onLanded={onLanded}><BowtieModel /></FloatingProp>
-    <StudioFloor />
-    <SceneZoom motion={motion} />
+    <ambientLight intensity={0.7} />
+    <directionalLight position={[-3, 6, 5]} color="#f2f2e7" intensity={4} />
+    <directionalLight position={[4, 1, -3]} color="#c0dac2" intensity={3.5} />
+    <directionalLight position={[0, -3, 4]} color="#a4bbb4" intensity={1.2} />
+    <FloatingIdentity motion={motion}>
+      <group position={[0, 0.65, 0]}><GlassesModel /></group>
+      <group position={[0, -1.3, 1.1]}><BowtieModel /></group>
+    </FloatingIdentity>
   </Canvas>;
 }
