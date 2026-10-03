@@ -8,12 +8,13 @@
 .brand-mark { width: 2.6rem; height: 2.6rem; }
 .desktop-nav { gap: 2rem; font-size: .82rem; }
 .desktop-nav a { min-height: 44px; display: inline-flex; align-items: center; }
-body:has(.spectacle-hero) .site-header { --ink: #f4f5ed; --bg: #111819; --muted: #c0c8c0; --surface-2: #29332b; --line: #ffffff20; background: #111819ee; color: var(--ink); }
-body:has(.spectacle-hero) .site-header .brand-mark { filter: invert(1); }
-body:has(.spectacle-hero) .site-header .btn-primary { background: #d1e5b8; color: #16201c; }
-body:has(.spectacle-hero) .site-header .btn-primary:hover { background: #e4f2d5; }
-body:has(.spectacle-hero) .mobile-nav { background: #111819; }
-.spectacle-hero { --focus: #d1e5b890; position: relative; isolation: isolate; overflow: clip; color: #f4f5ed; background: #111819; }
+[data-theme="dark"] body:has(.spectacle-hero) .site-header { --ink: #f4f5ed; --bg: #111819; --muted: #c0c8c0; --surface-2: #29332b; --line: #ffffff20; background: #111819ee; color: var(--ink); }
+[data-theme="dark"] body:has(.spectacle-hero) .site-header .brand-mark { filter: invert(1); }
+[data-theme="dark"] body:has(.spectacle-hero) .site-header .btn-primary { background: #d1e5b8; color: #16201c; }
+[data-theme="dark"] body:has(.spectacle-hero) .site-header .btn-primary:hover { background: #e4f2d5; }
+[data-theme="dark"] body:has(.spectacle-hero) .mobile-nav { background: #111819; }
+.spectacle-hero { position: relative; isolation: isolate; overflow: clip; color: var(--ink); background: var(--bg); }
+[data-theme="dark"] .spectacle-hero { --focus: #d1e5b890; }
 .spectacle-atmosphere { position: absolute; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
 .spectacle-atmosphere > div:first-child { position: absolute; width: 900px; height: 850px; bottom: -520px; left: -140px; border-radius: 50%; background: radial-gradient(ellipse, #87a68755, #567a7420 42%, transparent 68%); }
 .spectacle-atmosphere > div:last-child { position: absolute; width: 720px; height: 740px; top: -260px; right: -210px; border-radius: 50%; background: radial-gradient(ellipse, #999cc426, transparent 67%); }
@@ -46,6 +47,25 @@ body:has(.spectacle-hero) .mobile-nav { background: #111819; }
 .spectacle-baseline { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #d1e5b820; padding-block: 1.2rem; font-size: .68rem; color: #b9c3b9; }
 .spectacle-baseline a { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #d1e5b833; border-radius: 50%; transition: background .2s; }
 .spectacle-baseline a:hover { background: #d1e5b818; }
+/* The light opening keeps the same composition with readable sage accents. */
+:root:not([data-theme="dark"]) .spectacle-eyebrow,
+:root:not([data-theme="dark"]) .spectacle-description,
+:root:not([data-theme="dark"]) .spectacle-actions a:last-child,
+:root:not([data-theme="dark"]) .spectacle-assistant-note,
+:root:not([data-theme="dark"]) .spectacle-baseline { color: var(--muted); }
+:root:not([data-theme="dark"]) .spectacle-copy h1 em,
+:root:not([data-theme="dark"]) .spectacle-assistant-note svg { color: var(--brand); }
+:root:not([data-theme="dark"]) .spectacle-eyebrow > span { background: var(--brand); box-shadow: 0 0 12px #43584826; }
+:root:not([data-theme="dark"]) .spectacle-actions a:first-child,
+:root:not([data-theme="dark"]) .spectacle-baseline,
+:root:not([data-theme="dark"]) .spectacle-baseline a { border-color: var(--line); }
+:root:not([data-theme="dark"]) .spectacle-actions a:hover { color: var(--brand-strong); }
+:root:not([data-theme="dark"]) .spectacle-baseline a:hover { background: var(--surface-2); }
+:root:not([data-theme="dark"]) .spectacle-sculpture .hero-object-fallback img { filter: none; }
+:root:not([data-theme="dark"]) .spectacle-halo i { border-color: #43584826; }
+:root:not([data-theme="dark"]) .spectacle-halo i:nth-child(2) { border-color: #707a9c33; }
+:root:not([data-theme="dark"]) .spectacle-halo i:nth-child(3) { border-color: #43584818; }
+:root:not([data-theme="dark"]) .spectacle-assistant .assistant-workspace:focus-visible { outline-color: var(--brand); }
 .studio-ribbon { background: #d1e5b8; color: #17261c; overflow: hidden; }
 .studio-ribbon > div { max-width: 1500px; margin: auto; display: flex; align-items: center; justify-content: space-around; gap: 2rem; padding: 1.35rem 3rem; }
 .studio-ribbon span { white-space: nowrap; font-family: var(--font-inter), sans-serif; letter-spacing: -.02em; font-size: .93rem; }
