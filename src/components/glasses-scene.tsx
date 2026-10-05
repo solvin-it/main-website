@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, type ReactNode, type MutableRefObject } fro
 import * as THREE from "three";
 import { createBowtieGeometry, createFabricNormalMap } from "@/lib/bowtie-geometry";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { useDarkTheme } from "./use-site-theme";
 
 export type SceneMotion = { x: number; active: boolean; pointerX: number; pointerY: number };
 type SceneProps = {
@@ -95,20 +96,23 @@ function GlassesModel() {
 }
 
 function BowtieModel() {
+  const dark = useDarkTheme();
+  const invalidate = useThree(state => state.invalidate);
   const geometry = useMemo(() => createBowtieGeometry(), []);
   const fabric = useMemo(() => createFabricNormalMap(), []);
+  useEffect(() => { invalidate(); }, [dark, invalidate]);
   useEffect(() => () => {
     geometry.left.dispose(); geometry.right.dispose(); geometry.knot.dispose(); fabric.dispose();
   }, [geometry, fabric]);
   return <group>
     {Object.entries(geometry).map(([name, surface]) => <mesh key={name} geometry={surface} castShadow>
       <meshPhysicalMaterial
-        color={name === "knot" ? "#7f8e73" : "#aebd9c"}
+        color={dark ? (name === "knot" ? "#7f8e73" : "#aebd9c") : (name === "knot" ? "#203626" : "#304c39")}
         metalness={0} roughness={0.76} specularIntensity={0.18}
-        sheen={0.3} sheenColor="#bec9ae" sheenRoughness={0.9}
+        sheen={0.3} sheenColor={dark ? "#bec9ae" : "#6b805f"} sheenRoughness={0.9}
         normalMap={fabric} normalScale={new THREE.Vector2(0.22, 0.22)}
         anisotropy={0.25} anisotropyRotation={name === "knot" ? Math.PI / 2 : 0}
-        envMapIntensity={0.45}
+        envMapIntensity={dark ? 0.45 : 0.3}
       />
     </mesh>)}
   </group>;
