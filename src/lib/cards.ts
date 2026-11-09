@@ -13,8 +13,8 @@ export type TeamCard = {
 
 export const cards: TeamCard[] = [
   {
-    slug: "fernando",
-    givenName: "Fernando",
+    slug: "fernand9",
+    givenName: "Jose Fernando",
     familyName: "Gonzales",
     title: "Founder",
     organization: "Solvin",
