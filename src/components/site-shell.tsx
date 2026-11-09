@@ -48,6 +48,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const assistantHref = pathname === "/" ? "#assistant-workspace" : "/readiness#assistant-workspace";
+  const isCard = pathname.startsWith("/card/");
 
   useEffect(() => {
     if (!open) return;
@@ -57,6 +58,8 @@ export function Header() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
+
+  if (isCard) return null;
 
   return (
     <header className="site-header">
@@ -88,6 +91,9 @@ export function Header() {
 }
 
 export function Footer() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/card/")) return null;
+
   return (
     <footer className="site-footer">
       <div className="container footer-intro">
